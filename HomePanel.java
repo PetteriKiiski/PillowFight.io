@@ -52,11 +52,15 @@ public class HomePanel extends JPanel
 		screenBar.add(screenMenu);
 		
 		//Then, finally set the boundaries of our JMenu
-		screenBar.setBounds(200, 150, 300, 20);
-		
+		screenBar.setBounds(200, 150, 100, 20);
+
 		//Add all the components
 		add(titleLabel);
 		add(screenBar);
+
+		//revalidate(); //Simply put, this updates the layout tree.
+			      //This is needed to recalculate the position of the pop up menu
+		//repaint(); //Then add these changes
 	}
 	
 	//This just listens to this page in general. Mostly will listen to options
@@ -65,9 +69,12 @@ public class HomePanel extends JPanel
 		public void actionPerformed(ActionEvent evt)
 		{
 			String cmd = evt.getActionCommand();
-			if (cmd == "START GAME")
+			switch (cmd)
 			{
-				cards.show(mainCanvas, "Game");
+				case "START GAME":
+					cards.show(mainCanvas, "Game");
+					break;
+				//More will be added
 			}
 		}
 	}
