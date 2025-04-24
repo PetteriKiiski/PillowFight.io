@@ -24,9 +24,6 @@ public class HomePanel extends JPanel
 		//Initialize our Option Listener
 		OptionListener opts = new OptionListener();
 		
-		//Set Background, then do other stuff
-		setBackground(Color.GREEN);
-		
 		//We will use null layout for this one
 		setLayout(null);
 		
@@ -74,6 +71,11 @@ public class HomePanel extends JPanel
 				case "START GAME":
 					cards.show(mainCanvas, "Game");
 					break;
+				case "Instructions":
+					cards.show(mainCanvas, "Instructions");
+					break;
+				case "Hall of Fame":
+					cards.show(mainCanvas, "Fame");
 				//More will be added
 			}
 		}
