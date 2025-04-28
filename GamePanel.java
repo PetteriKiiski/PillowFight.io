@@ -1,3 +1,7 @@
+//GamePanel.java: You play the game here
+//
+//But this is also just a place holder right now
+
 import javax.swing.JPanel;
 import java.awt.Color;
 
