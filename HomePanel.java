@@ -1,7 +1,3 @@
-//HomePanel.java: This panel is the first panel
-//You essentially customize the game here, and
-//you select where you go next, which "tab," or card
-//you go to next.
 import javax.swing.JPanel;
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -16,13 +12,16 @@ import javax.swing.JMenuItem;
 
 public class HomePanel extends JPanel
 {
+	CardLayout cards;
+	GameHolder mainCanvas;
+	
 	public HomePanel(CardLayout cardsIn, GameHolder mainCanvasIn)
 	{
-		//Initialize our values from the constructor
-		CardLayout cards = cardsIn;
-		GameHolder mainCanvas = mainCanvasIn;
-
-		//Make our option listener, which listens to customizations.	
+		//Set our field variables, taken from parameters
+		cards = cardsIn;
+		mainCanvas = mainCanvasIn;
+		
+		//Initialize our Option Listener
 		OptionListener opts = new OptionListener();
 		
 		//We will use null layout for this one
@@ -55,6 +54,10 @@ public class HomePanel extends JPanel
 		//Add all the components
 		add(titleLabel);
 		add(screenBar);
+
+		//revalidate(); //Simply put, this updates the layout tree.
+			      //This is needed to recalculate the position of the pop up menu
+		//repaint(); //Then add these changes
 	}
 	
 	//This just listens to this page in general. Mostly will listen to options

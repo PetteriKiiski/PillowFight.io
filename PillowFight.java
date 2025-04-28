@@ -1,12 +1,4 @@
-//PillowFight.java: this is the "main" program, the file to be executed.
-//It doesn't REALLY do much, just sets up the cards and Frame, but otherwise
-//it doesn't it doesn't actually add any components.
-//
-//Important notice:
-//Many classes are currently in separate files, though for organisational purposes
-//may be moved to this class, or even another one of the files, depending on where
-//it seems fit, just because it may be pointless to have a 30 line program in its
-//own file.
+//Main game file
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -41,9 +33,10 @@ public class PillowFight
 
 class GameHolder extends JPanel
 {
-	//CONSTANT: whether or not our PositionListener is added:
-	//Do we print the mouse position when you click?
 	private final boolean PRINT_POSITION = true;
+	
+	//The home button
+	private Image homeButtonImg;
 
 	//Cards are placed on this.
 	private JPanel cardPanel;
@@ -64,7 +57,6 @@ class GameHolder extends JPanel
 		
 		//Load the home button
 		
-		/* Currently not working:
 		homeButtonImg = null;
 		try
 		{
@@ -74,8 +66,7 @@ class GameHolder extends JPanel
 		{
 			System.err.println("There was an error loading the home button's image");
 		}
-		*/
-
+		
 		//Actually add all these panels
 		add("Home", hp);
 		add("Game", gp);
