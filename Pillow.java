@@ -7,13 +7,13 @@ public class Pillow
 {
 	//Stores the position: while it's a double, it'll be rounded.
 	//This will smoother motion when it's really slow for whatever reason
-	double x, y;
+	private double x, y;
 	
 	//Generation Range Constants
-	public static final int MIN_X = 0;
-	public static final int MIN_Y = 0;
-	public static final int MAX_X = 1000;
-	public static final int MAX_Y = 800;
+	public static final int MIN_X = -1000;
+	public static final int MIN_Y = -800;
+	public static final int MAX_X = 2000;
+	public static final int MAX_Y = 1600;
 		
 	//The number on the pillow: will be the solution
 	int num;
@@ -40,14 +40,42 @@ public class Pillow
 		g.setColor(new Color(0, 0, 0));
 		g.setFont(new Font("Arial", Font.PLAIN, 25));
 		g.drawString(Integer.toString(num), (int)x+15, (int)y+38);
-		System.out.printf("(%d, %d), width: 50, height: 50\n", (int)x, (int)y);
+	}
+	
+	//Move the pillow
+	public void moveX(double amt)
+	{
+		x += amt;
+		//Cycle the pillows
+		if (x >= 2000)
+		{
+			x -= 3000;
+		}
+		if (x <= -1000)
+		{
+			x += 3000;
+		}
+	}
+	
+	public void moveY(double amt)
+	{
+		y += amt;
+		//Cycle the pillows
+		if (y >= 1600)
+		{
+			y -= 2400;
+		}
+		if (y <= -800)
+		{
+			y += 2400;
+		}
 	}
 }
 
 //Contains all the pillows that exist
 class PillowArray
 {
-	Pillow[] pillows;
+	private Pillow[] pillows;
 	
 	//Create a customizable pillow number
 	public PillowArray(int numPillows)
@@ -65,6 +93,23 @@ class PillowArray
 		for (int i = 0; i < pillows.length; i++)
 		{
 			pillows[i].paintPillow(g);
+		}
+	}
+	
+	//Move ALL the pillows
+	public void moveX(double amt)
+	{
+		for (int i = 0; i < pillows.length; i++)
+		{
+			pillows[i].moveX(amt);
+		}
+	}
+	
+	public void moveY(double amt)
+	{
+		for (int i = 0; i < pillows.length; i++)
+		{
+			pillows[i].moveY(amt);
 		}
 	}
 }
