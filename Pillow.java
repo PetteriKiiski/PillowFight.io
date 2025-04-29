@@ -1,5 +1,6 @@
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Font;
 
 //Contains all the pillows
 public class Pillow
@@ -8,12 +9,24 @@ public class Pillow
 	//This will smoother motion when it's really slow for whatever reason
 	double x, y;
 	
-	//Constructor: takes in the range of the generation
-	public Pillow (double minx, double maxx, double miny, double maxy)
+	//Generation Range Constants
+	public static final int MIN_X = 0;
+	public static final int MIN_Y = 0;
+	public static final int MAX_X = 1000;
+	public static final int MAX_Y = 800;
+		
+	//The number on the pillow: will be the solution
+	int num;
+	
+	//Constructor: takes in the number
+	public Pillow (int numIn)
 	{
 		//Generate the pillow's position
-		x = (maxx - minx) * Math.random() + minx;
-		y = (maxy - miny) * Math.random() + miny;
+		x = (MAX_X - MIN_X) * Math.random() + MIN_X;
+		y = (MAX_Y - MIN_Y) * Math.random() + MIN_Y;
+	
+		//The number on it
+		num = numIn;
 	}
 	
 	//Paints the pillow
@@ -21,7 +34,13 @@ public class Pillow
 	{
 		//Simply draws a square, which represents the pillow
 		g.setColor(new Color(255, 255, 0));
-		g.drawRect((int)x, (int)y, 50, 50);
+		g.fillRect((int)x, (int)y, 50, 50);
+		
+		//Draw the number on the pillow
+		g.setColor(new Color(0, 0, 0));
+		g.setFont(new Font("Arial", Font.PLAIN, 25));
+		g.drawString(Integer.toString(num), (int)x+15, (int)y+38);
+		System.out.printf("(%d, %d), width: 50, height: 50\n", (int)x, (int)y);
 	}
 }
 
@@ -34,6 +53,11 @@ class PillowArray
 	public PillowArray(int numPillows)
 	{
 		pillows = new Pillow[numPillows];
+		for (int i = 0; i < numPillows; i++)
+		{
+			//i % 10 ensures all digits exist in the "world"
+			pillows[i] = new Pillow(i % 10);
+		}
 	}
 	
 	public void paintPillows(Graphics g)
