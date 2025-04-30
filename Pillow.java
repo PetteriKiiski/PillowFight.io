@@ -42,7 +42,7 @@ public class Pillow
 		g.drawString(Integer.toString(num), (int)x+15, (int)y+38);
 	}
 	
-	//Move the pillow
+	//Move the pillow: both of these
 	public void moveX(double amt)
 	{
 		x += amt;
@@ -70,6 +70,27 @@ public class Pillow
 			y += 2400;
 		}
 	}
+
+	//Returns the distance from the "player", or the center of the screen
+	//Also, we use the center of the square
+	public double getDist()
+	{
+		return Math.sqrt(Math.pow(500 - (x + 25), 2) + Math.pow(400 - (y + 25), 2));
+	}
+
+	//Doesn't actually set a boolean: changes location
+	public void setPicked()
+	{
+		x = 515;
+		y = 415;
+	}
+
+	//Also just changes location
+	public void drop()
+	{
+		x = 530;
+		y = 480;
+	}
 }
 
 //Contains all the pillows that exist
@@ -77,6 +98,8 @@ class PillowArray
 {
 	private Pillow[] pillows;
 	
+	int pickedUp = -1;
+
 	//Create a customizable pillow number
 	public PillowArray(int numPillows)
 	{
@@ -101,7 +124,10 @@ class PillowArray
 	{
 		for (int i = 0; i < pillows.length; i++)
 		{
-			pillows[i].moveX(amt);
+			if (i != pickedUp)
+			{
+				pillows[i].moveX(amt);
+			}
 		}
 	}
 	
@@ -109,7 +135,55 @@ class PillowArray
 	{
 		for (int i = 0; i < pillows.length; i++)
 		{
-			pillows[i].moveY(amt);
+			if (i != pickedUp)
+			{
+				pillows[i].moveY(amt);
+			}
+		}
+	}
+
+	//Pick up the closest, reasonably close pillow
+	public void pickUp()
+	{
+		double closest = 200; //The maximum legal distance for picking up
+		int index = -1;
+
+		double currentDist;
+		for (int i = 0; i < pillows.length; i++)
+		{
+			currentDist = pillows[i].getDist();
+			//Make sure it's an appropriate distance(ensured by the closest's initial value)
+			//AND it the closest pillow
+			//AND it isn't just the same pillow we are already holding
+			if (currentDist <= closest && i != pickedUp)
+			{
+				index = i;
+				closest = currentDist;
+			}
+		}
+
+		//If there is a close pillow
+		if (index != -1)
+		{
+			//Drop the current pillow, if there is one
+			if (pickedUp != -1)
+			{
+				pillows[pickedUp].drop();
+			}
+
+			//Then pick it up
+			pickedUp = index;
+			pillows[pickedUp].setPicked();
+		}
+	}
+
+	//Show the picked up pillow, presumably above everything else
+	public void showPickedUp(Graphics g)
+	{
+		//Make sure SOMETHING is picked up
+		if (pickedUp != -1)
+		{
+			pillows[pickedUp].paintPillow(g);
 		}
 	}
 }

@@ -23,6 +23,9 @@ public class GamePanel extends JPanel
 	//Immune until click
 	public boolean immune;
 	
+	//Animation Listener
+	AnimateListener aL;
+
 	public GamePanel()
 	{
 		//You are immune until you are not
@@ -30,13 +33,13 @@ public class GamePanel extends JPanel
 		
 		setFocusable(true);
 		pillows = new PillowArray(90);
-		AnimateListener aL = new AnimateListener(this, pillows);
+		aL = new AnimateListener(this, pillows);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener
 		timer.start();
 		
-		//And, focus in this window
-		addMouseListener(new KeepFocus());
+		//And, finally the mouseListener
+		addMouseListener(new ThrowListener());
 	}
 	
 	//Paint component!
@@ -61,10 +64,13 @@ public class GamePanel extends JPanel
 			g.setColor(new Color(255, 0, 255));
 		}
 		g.fillOval(450, 350, 100, 100);
+
+		//Then, over all this, paint the picked up pillow
+		pillows.showPickedUp(g);
 	}
 	
-	//Keeps focus in window
-	class KeepFocus implements MouseListener
+	//Keeps focus in window: and also interact with pillows(throwing)
+	class ThrowListener implements MouseListener
 	{
 		public void mouseExited(MouseEvent evt) {}
 		public void mouseEntered(MouseEvent evt) {}
@@ -72,8 +78,21 @@ public class GamePanel extends JPanel
 		public void mousePressed(MouseEvent evt) {}
 		public void mouseClicked(MouseEvent evt)
 		{
-			requestFocusInWindow();
-			immune = false;
+			//Pick up pillow / Throw / Use
+			if (!immune)
+			{	
+				//Get the button
+				int button = evt.getButton();
+				if (button == MouseEvent.BUTTON1)
+				{
+					aL.pickUp();
+				}
+			}
+			else //Focus things
+			{
+				requestFocusInWindow();
+				immune = false;
+			}
 		}
 	}
 }
@@ -81,7 +100,6 @@ public class GamePanel extends JPanel
 //Our updater: moves everything, etc.
 class AnimateListener implements ActionListener
 {
-	
 	//Array of pillows
 	PillowArray pillows;
 	
@@ -165,6 +183,12 @@ class AnimateListener implements ActionListener
 	public void moveDown(boolean YoN)
 	{
 		down = YoN;
+	}
+
+	//Picks up a pillow
+	public void pickUp()
+	{
+		pillows.pickUp();
 	}
 }
 
