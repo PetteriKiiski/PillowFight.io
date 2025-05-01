@@ -19,16 +19,14 @@ public class Pillow
 	private boolean throwing;
 
 	//The speed of the pillows
-	public static final int PILLOW_SPEED = 1500; //PX per second
+	public static final int PILLOW_SPEED = 1000; //PX per second
 
 	//Throw time
 	public static final double THROW_TIME = 0.4; //In seconds
 
-	//Generation Range Constants
-	public static final int MIN_X = -1000;
-	public static final int MIN_Y = -800;
-	public static final int MAX_X = 2000;
-	public static final int MAX_Y = 1600;
+	//Generation Range Constants: no need for min, as it's cyclical
+	public static final int MAX_X = 3000;
+	public static final int MAX_Y = 2400;
 		
 	//The number on the pillow: will be the solution
 	int num;
@@ -37,8 +35,8 @@ public class Pillow
 	public Pillow (int numIn)
 	{
 		//Generate the pillow's position
-		x = (MAX_X - MIN_X) * Math.random() + MIN_X;
-		y = (MAX_Y - MIN_Y) * Math.random() + MIN_Y;
+		x = MAX_X * Math.random();
+		y = MAX_Y * Math.random();
 	
 		//Initialize velocity
 		xvel = 0;
@@ -156,7 +154,25 @@ public class Pillow
 	//Cycles the position
 	public void cycle()
 	{
-		y %= 2400;
+		//really simple
+		if (y >= MAX_Y)
+		{
+			y %= MAX_Y - 50;
+			y -= 50; //See, without this, the pillows appear to "pop" out of nowhere
+		}
+		else if (y <= -50)
+		{
+			y += MAX_Y;
+		}
+		if (x >= MAX_X)
+		{
+			x %= MAX_X - 50;
+			x -= 50;
+		}
+		else if (x <= 0)
+		{
+			x += MAX_X;
+		}
 	}
 }
 
