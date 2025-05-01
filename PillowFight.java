@@ -34,38 +34,22 @@ public class PillowFight
 class GameHolder extends JPanel
 {
 	private final boolean PRINT_POSITION = true;
-	
-	//The home button
-	private Image homeButtonImg;
 
 	//Cards are placed on this.
 	private JPanel cardPanel;
 	
 	public GameHolder()
 	{
-		
 		CardLayout cards = new CardLayout();
 		
 		//Set the layout
 		setLayout(cards);
 		
 		//Create and add all our panels
-		HomePanel hp = new HomePanel(cards, this);
-		GamePanel gp = new GamePanel();
+		GamePanel gp = new GamePanel(cards, this);
+		HomePanel hp = new HomePanel(cards, this, gp);
 		InstructionsPanel ip = new InstructionsPanel();
 		FamePanel fp = new FamePanel();
-		
-		//Load the home button
-		
-		homeButtonImg = null;
-		try
-		{
-			homeButtonImg = ImageIO.read(new File("images/homeBtn.png"));
-		}
-		catch (IOException e)
-		{
-			System.err.println("There was an error loading the home button's image");
-		}
 		
 		//Actually add all these panels
 		add("Home", hp);

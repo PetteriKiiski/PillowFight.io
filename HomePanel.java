@@ -15,8 +15,12 @@ public class HomePanel extends JPanel
 	CardLayout cards;
 	GameHolder mainCanvas;
 	
-	public HomePanel(CardLayout cardsIn, GameHolder mainCanvasIn)
+	GamePanel gamePanel; //Needs to be reset before starting
+	
+	public HomePanel(CardLayout cardsIn, GameHolder mainCanvasIn, GamePanel gamePanelIn)
 	{
+		gamePanel = gamePanelIn;
+		
 		//Set our field variables, taken from parameters
 		cards = cardsIn;
 		mainCanvas = mainCanvasIn;
@@ -69,6 +73,7 @@ public class HomePanel extends JPanel
 			switch (cmd)
 			{
 				case "START GAME":
+					gamePanel.setImmune(true); //Make it immune upon entering.
 					cards.show(mainCanvas, "Game");
 					break;
 				case "Instructions":

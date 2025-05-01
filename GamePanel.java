@@ -11,6 +11,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
+import javax.swing.JButton;
+import java.awt.CardLayout;
+import java.io.File; //Images
 
 public class GamePanel extends JPanel
 {
@@ -26,8 +29,27 @@ public class GamePanel extends JPanel
 	//Animation Listener
 	AnimateListener aL;
 
-	public GamePanel()
+	//Buttons!
+	JButton homeButton;
+
+	//To change panels
+	CardLayout cards;
+	JPanel mainPanel;
+
+	public void setImmune(boolean immunity)
 	{
+		immune = immunity;
+	}
+
+	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn)
+	{
+		//Things that we need to change panels
+		cards = cardsIn;
+		mainPanel = mainPanelIn;
+		
+		//Set the layout
+		setLayout(null);
+		
 		//You are immune until you are not
 		immune = true;
 		
@@ -37,6 +59,14 @@ public class GamePanel extends JPanel
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener
 		timer.start();
+		
+		//Our Home Button
+		homeButton = new JButton("Home");
+		homeButton.setBounds(0, 0, 200, 100);
+		homeButton.addActionListener(new ButtonListener(cards, mainPanel, this));
+		
+		//Add the button
+		add(homeButton);
 		
 		//And, finally the mouseListener
 		addMouseListener(new ThrowListener());
@@ -74,9 +104,11 @@ public class GamePanel extends JPanel
 	{
 		public void mouseExited(MouseEvent evt) {}
 		public void mouseEntered(MouseEvent evt) {}
-		public void mouseReleased(MouseEvent evt) {}
-		public void mousePressed(MouseEvent evt) {}
-		public void mouseClicked(MouseEvent evt)
+		public void mouseReleased(MouseEvent evt) 
+		{
+
+		}
+		public void mousePressed(MouseEvent evt)
 		{
 			//Pick up pillow / Throw / Use
 			if (!immune)
@@ -100,6 +132,29 @@ public class GamePanel extends JPanel
 				immune = false;
 			}
 		}
+		public void mouseClicked(MouseEvent evt) {}
+	}
+}
+
+//To make implementation easier, these are separate classes
+class ButtonListener implements ActionListener
+{
+	CardLayout cards;
+	JPanel panel;
+	
+	//This needs to be reset upon Home Button Clicking
+	GamePanel gamePanel;
+	
+	public ButtonListener(CardLayout cardsIn, JPanel panelIn, GamePanel gamePanelIn)
+	{
+		cards = cardsIn;
+		panel = panelIn;
+		gamePanel = gamePanelIn;
+	}
+	
+	public void actionPerformed(ActionEvent evt)
+	{
+		cards.show(panel, "Home");
 	}
 }
 
