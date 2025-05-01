@@ -1,3 +1,4 @@
+//Pillow class which has the data for the pillow and the PillowArray
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Font;
@@ -157,22 +158,26 @@ public class Pillow
 		//really simple
 		if (y >= MAX_Y)
 		{
-			y %= MAX_Y - 50;
-			y -= 50; //See, without this, the pillows appear to "pop" out of nowhere
+			y -= MAX_Y + 50; //See, without this, the pillows appear to "pop" out of nowhere
 		}
 		else if (y <= -50)
 		{
 			y += MAX_Y;
 		}
+
 		if (x >= MAX_X)
 		{
-			x %= MAX_X - 50;
-			x -= 50;
+			x -= MAX_X + 50;
 		}
-		else if (x <= 0)
+		else if (x <= -50)
 		{
 			x += MAX_X;
 		}
+	}
+
+	public boolean beingThrown()
+	{
+		return throwing;
 	}
 }
 
@@ -254,10 +259,10 @@ class PillowArray
 			}
 		}
 
-		//If there is a close pillow
-		if (index != -1)
+		//If there is a close pillow, which is not being thrown
+		if (index != -1 && !pillows[index].beingThrown())
 		{
-			//Drop the current pillow, if there is one
+			//Drop the current pillow, if there is one: there shouldn't be though
 			if (pickedUp != -1)
 			{
 				pillows[pickedUp].drop();
