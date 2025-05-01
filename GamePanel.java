@@ -85,7 +85,13 @@ public class GamePanel extends JPanel
 				int button = evt.getButton();
 				if (button == MouseEvent.BUTTON1)
 				{
-					aL.pickUp();
+					if (pillows.holdingPillow()) //Only pick up if nothing is picked up, otherwise, throw
+					{
+						pillows.throwPillow(evt.getX(), evt.getY());
+					}
+					else {
+						aL.pickUp();
+					}
 				}
 			}
 			else //Focus things
@@ -160,6 +166,7 @@ class AnimateListener implements ActionListener
 			pillows.moveY(-movePX);
 		}
 		
+		pillows.movePillows(); //Move thrown pillows
 		//Then, repaint
 		panel.repaint();
 	} 

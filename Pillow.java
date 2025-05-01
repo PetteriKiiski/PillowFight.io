@@ -8,7 +8,22 @@ public class Pillow
 	//Stores the position: while it's a double, it'll be rounded.
 	//This will smoother motion when it's really slow for whatever reason
 	private double x, y;
-	
+
+	//The velocity when thrown
+	private double xvel, yvel;
+
+	//Our time tracker, while throwing
+	private int throwTick;
+
+	//Are we throwing it?
+	private boolean throwing;
+
+	//The speed of the pillows
+	public static final int PILLOW_SPEED = 1500; //PX per second
+
+	//Throw time
+	public static final double THROW_TIME = 0.4; //In seconds
+
 	//Generation Range Constants
 	public static final int MIN_X = -1000;
 	public static final int MIN_Y = -800;
@@ -25,6 +40,13 @@ public class Pillow
 		x = (MAX_X - MIN_X) * Math.random() + MIN_X;
 		y = (MAX_Y - MIN_Y) * Math.random() + MIN_Y;
 	
+		//Initialize velocity
+		xvel = 0;
+		yvel = 0;
+
+		//We are not being thrown
+		throwing = false;
+
 		//The number on it
 		num = numIn;
 	}
@@ -47,28 +69,14 @@ public class Pillow
 	{
 		x += amt;
 		//Cycle the pillows
-		if (x >= 2000)
-		{
-			x -= 3000;
-		}
-		if (x <= -1000)
-		{
-			x += 3000;
-		}
+		cycle();
 	}
 	
 	public void moveY(double amt)
 	{
 		y += amt;
 		//Cycle the pillows
-		if (y >= 1600)
-		{
-			y -= 2400;
-		}
-		if (y <= -800)
-		{
-			y += 2400;
-		}
+		cycle();
 	}
 
 	//Returns the distance from the "player", or the center of the screen
@@ -90,6 +98,65 @@ public class Pillow
 	{
 		x = 530;
 		y = 480;
+	}
+
+	//Sets a velocity: takes in distance from center, uses to calculate velocity
+	public void throwPillow(int to_x, int to_y)
+	{
+		/*
+		 * Here are my calculations:
+		 * Draw a right triangle, and label the legs x, and y.
+		 * The "speed" is going to be sqrt(x^2 + y^2)
+		 * Now, we make our velocity these x and y values,
+		 * multiplied by our desired speed, divided by this
+		 * hypotneuse, which would be the speed without this
+		 * calculation.
+		 */
+		if (!throwing) //Just a safety check
+		{
+			double hypot = Math.sqrt(Math.pow(to_x, 2) + Math.pow(to_y, 2));
+			xvel = to_x * PILLOW_SPEED / hypot;
+			yvel = to_y * PILLOW_SPEED / hypot;
+			throwing = true;
+		}
+	}
+
+	//Moves, according to our velocity
+	public void move()
+	{
+		if (throwing)
+		{
+			//Move it
+			
+			/*
+			 * Calculations:
+			 * xvel px / s = ? px / DELAY ms
+			 * xvel DELAY px ms = ? px s
+			 * ? = xvel DELAY ms / s
+			 * ? = xvel DELAY / 1000
+			 */
+			x += (int)xvel * AnimateListener.DELAY / 1000;
+			y += (int)yvel * AnimateListener.DELAY / 1000;
+			//Keep track of time
+			throwTick++;
+			
+			//Amount of times will be TIME * 1000 / DELAY
+			if (throwTick >= THROW_TIME * 1000 / AnimateListener.DELAY)
+			{
+				throwTick = 0;
+				xvel = 0;
+				yvel = 0;
+				throwing = false;
+			}
+			//And again, cycle
+			cycle();
+		}
+	}
+
+	//Cycles the position
+	public void cycle()
+	{
+		y %= 2400;
 	}
 }
 
@@ -142,6 +209,15 @@ class PillowArray
 		}
 	}
 
+	//Certain pillows will have velocity: this moves them accordingly.
+	public void movePillows()
+	{
+		for (int i = 0; i < pillows.length; i++)
+		{
+			pillows[i].move();
+		}
+	}
+
 	//Pick up the closest, reasonably close pillow
 	public void pickUp()
 	{
@@ -185,5 +261,16 @@ class PillowArray
 		{
 			pillows[pickedUp].paintPillow(g);
 		}
+	}
+
+	public void throwPillow(int x, int y) //Mouse coordinates indicate direction: however, they are modified to represent distance from center
+	{
+		pillows[pickedUp].throwPillow(x - 540, y - 440); //Throws the picked up pillow
+		pickedUp = -1;
+	}
+
+	public boolean holdingPillow()
+	{
+		return pickedUp != -1; //Returns false if not holding pillow, true if it is.
 	}
 }
