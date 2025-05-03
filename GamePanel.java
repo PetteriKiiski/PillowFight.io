@@ -22,7 +22,10 @@ public class GamePanel extends JPanel
 	
 	//Array of all the pillows
 	PillowArray pillows;
-	
+		
+	//Array of all the bots
+	BotArray bots;
+
 	//Immune until click
 	public boolean immune;
 	
@@ -55,7 +58,8 @@ public class GamePanel extends JPanel
 		
 		setFocusable(true);
 		pillows = new PillowArray(90);
-		aL = new AnimateListener(this, pillows);
+		bots = new BotArray(1, pillows);
+		aL = new AnimateListener(this, pillows, bots);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener
 		timer.start();
@@ -80,6 +84,7 @@ public class GamePanel extends JPanel
 		
 		//Paint all the pillows
 		pillows.paintPillows(g);
+		bots.paintBots(g);
 		
 		//Paint the player. Who definitely moves... totally
 		if (immune)
@@ -164,6 +169,9 @@ class AnimateListener implements ActionListener
 	//Array of pillows
 	PillowArray pillows;
 	
+	//Array of Bots
+	BotArray bots;
+
 	//The Drawing panel
 	GamePanel panel;
 	
@@ -182,9 +190,10 @@ class AnimateListener implements ActionListener
 	public static final int DELAY = 16; //in ms : this is the timer delay
 	
 	//Take in all the info we need. Which is a lot.
-	public AnimateListener(GamePanel panelIn, PillowArray pillowsIn)
+	public AnimateListener(GamePanel panelIn, PillowArray pillowsIn, BotArray botsIn)
 	{
 		pillows = pillowsIn;
+		bots = botsIn;
 		panel = panelIn;
 		left = false;
 		right = false;

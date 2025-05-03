@@ -1,6 +1,7 @@
+import java.awt.Graphics;
 //This is the super-class for ALL BOTS
 //This is abstract, and must be inherited
-public abstract class Bot
+abstract class Bot
 {
 	//Coordinates:
 	private double x, y;
@@ -8,31 +9,22 @@ public abstract class Bot
 	//PillowArray: stores all the pillows
 	PillowArray pillows;
 
-	public static final BOT_SPEED = 1000;
-
 	public Bot(PillowArray pA) {
 		pillows = pA;
 	}
 	
 	//Decide what you are going to do
-	abstract void decide();
+	abstract void decide(); //The child class must decide
 	
 	//Moves: the decide method calls these alongside vision
-	public void moveLeft(double amt)
+	public void moveX(double amt)
 	{
-		
+		x += amt;
 	}
 
-	public void moveRight(double amt)
+	public void moveY(double amt)
 	{
-	}
-
-	public void moveUp(double amt)
-	{
-	}
-
-	public void moveDown(double amt)
-	{
+		y += amt;
 	}
 
 	public void pickUp(Pillow pillow)
@@ -48,7 +40,7 @@ public abstract class Bot
 	//The simplest method
 	public void paintBot(Graphics g)
 	{
-		g.fillOval(x, y, 100, 100);
+		g.fillOval((int)x, (int)y, 100, 100);
 	}
 
 	//Collide with bots and the player

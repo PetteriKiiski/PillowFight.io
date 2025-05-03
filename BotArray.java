@@ -5,16 +5,15 @@
 public class BotArray
 {
 	private Bot[] bots;
-	public static final Class[] botTypes = {TestBot}; //Array of botTypes
 	private PillowArray pillows;
 
 	public BotArray(int numBots, PillowArray pillowsIn)
 	{
 		pillows = pillowsIn;
 
-		for (int i = 0; i < numbots; i++)
+		for (int i = 0; i < numBots; i++)
 		{
-			bots[i] = new botTypes[i % botTypes.length]()
+			bots[i] = new DumbBot(pillows); //I would make it a loop, but it's a bit too complicated for my liking.
 		}
 	}
 }
