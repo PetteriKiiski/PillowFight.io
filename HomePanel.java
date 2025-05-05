@@ -74,6 +74,7 @@ public class HomePanel extends JPanel
 			{
 				case "START GAME":
 					gamePanel.setImmune(true); //Make it immune upon entering.
+					gamePanel.start(); //Start the game on the first time playing
 					cards.show(mainCanvas, "Game");
 					break;
 				case "Instructions":

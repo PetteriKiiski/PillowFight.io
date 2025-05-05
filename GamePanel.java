@@ -62,7 +62,6 @@ public class GamePanel extends JPanel
 		aL = new AnimateListener(this, pillows, bots);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener
-		timer.start();
 		
 		//Our Home Button
 		homeButton = new JButton("Home");
@@ -76,6 +75,13 @@ public class GamePanel extends JPanel
 		addMouseListener(new ThrowListener());
 	}
 	
+	
+	//Starts the bots, basically
+	public void start()
+	{
+		timer.start();
+	}
+	
 	//Paint component!
 	public void paintComponent(Graphics g)
 	{
@@ -84,7 +90,7 @@ public class GamePanel extends JPanel
 		
 		//Paint all the pillows
 		pillows.paintPillows(g);
-		bots.paintBots(g);
+		bots.paintBots(g); //And the bots!
 		
 		//Paint the player. Who definitely moves... totally
 		if (immune)
@@ -216,21 +222,28 @@ class AnimateListener implements ActionListener
 		if (left)
 		{
 			pillows.moveX(movePX);
+			bots.moveX(movePX);
 		}
 		if (right)
 		{
 			pillows.moveX(-movePX);
+			bots.moveX(-movePX);
 		}
 		if (up)
 		{
 			pillows.moveY(movePX);
+			bots.moveY(movePX);
 		}
 		if (down)
 		{
 			pillows.moveY(-movePX);
+			bots.moveY(-movePX);
 		}
 		
 		pillows.movePillows(); //Move thrown pillows
+		
+		bots.decide(); //make them move ON THEIR OWN
+		
 		//Then, repaint
 		panel.repaint();
 	} 

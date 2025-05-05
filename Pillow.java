@@ -80,9 +80,9 @@ public class Pillow
 
 	//Returns the distance from the "player", or the center of the screen
 	//Also, we use the center of the square
-	public double getDist()
+	public double getDist(double locx, double locy)
 	{
-		return Math.sqrt(Math.pow(500 - (x + 25), 2) + Math.pow(400 - (y + 25), 2));
+		return Math.sqrt(Math.pow(locx - (x + 25), 2) + Math.pow(locy - (y + 25), 2));
 	}
 
 	//Doesn't actually set a boolean: changes location
@@ -248,7 +248,7 @@ class PillowArray
 		double currentDist;
 		for (int i = 0; i < pillows.length; i++)
 		{
-			currentDist = pillows[i].getDist();
+			currentDist = pillows[i].getDist(500, 400);
 			//Make sure it's an appropriate distance(ensured by the closest's initial value)
 			//AND it the closest pillow
 			//AND it isn't just the same pillow we are already holding
