@@ -19,9 +19,13 @@ abstract class Bot
 	//PillowArray: stores all the pillows
 	PillowArray pillows;
 
+	Pillow pickedUp;
+
 	public Bot(PillowArray pA) {
 		pillows = pA;
 		
+		pickedUp = new Pillow(); 
+
 		x = Math.random() * Pillow.MAX_X;
 		y = Math.random() * Pillow.MAX_Y;
 		

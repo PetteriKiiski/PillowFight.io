@@ -6,7 +6,7 @@ public class PillowArray
 {
 	private Pillow[] pillows;
 	
-	int pickedUp = -1;
+	int pickedUp = -1; //This specially indicates the pillow pickedUp by the player
 
 	//Create a customizable pillow number
 	public PillowArray(int numPillows)
@@ -68,15 +68,19 @@ public class PillowArray
 		double currentDist;
 		for (int i = 0; i < pillows.length; i++)
 		{
-			currentDist = pillows[i].getDist(500, 400);
-			//Make sure it's an appropriate distance(ensured by the closest's initial value)
-			//AND it the closest pillow
-			//AND it isn't just the same pillow we are already holding
-			if (currentDist <= closest && i != pickedUp)
+			try
 			{
-				index = i;
-				closest = currentDist;
+				currentDist = pillows[i].getDist(500, 400);
+				//Make sure it's an appropriate distance(ensured by the closest's initial value)
+				//AND it the closest pillow
+				//AND it isn't just the same pillow we are already holding
+				if (currentDist <= closest && i != pickedUp)
+				{
+					index = i;
+					closest = currentDist;
+				}
 			}
+			catch (NotAPillowException err) {System.out.println("Huh?");} //This exception should never be thrown
 		}
 
 		//If there is a close pillow, which is not being thrown
@@ -125,15 +129,19 @@ public class PillowArray
 				{
 					for (int ymod = -1; ymod <= 1; ymod++)
 					{
-						//MAX_X is the amount everything loops by (same with MAX_Y on the y-axis)
-						tempDist = pillows[i].getDist(at_x + (xmod * Pillow.MAX_X), at_y + (ymod * Pillow.MAX_Y));
-						//Only really consider how close the "looped" pillow is if we have looped yet
-						if ((xmod == -1 && ymod == -1) || (tempDist <= currentDist)) //If it's closer than a looped version, then that's the "real distance"
+						try
 						{
-							currentDist = tempDist;
-							currentModX = xmod; //Remember how much cycling and the direction occured, so that the bot knows which way to go
-							currentModY = ymod;
+							//MAX_X is the amount everything loops by (same with MAX_Y on the y-axis)
+							tempDist = pillows[i].getDist(at_x + (xmod * Pillow.MAX_X), at_y + (ymod * Pillow.MAX_Y));
+							//Only really consider how close the "looped" pillow is if we have looped yet
+							if ((xmod == -1 && ymod == -1) || (tempDist <= currentDist)) //If it's closer than a looped version, then that's the "real distance"
+							{
+								currentDist = tempDist;
+								currentModX = xmod; //Remember how much cycling and the direction occured, so that the bot knows which way to go
+								currentModY = ymod;
+							}
 						}
+						catch (NotAPillowException err) {} //Should never really occur
 					}
 				}
 				if (currentDist <= closest || closest == -1) //If no pillows have been checked, this is closest by default
