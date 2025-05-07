@@ -1,20 +1,12 @@
 public class DumbBot extends Bot
-{
-	public int direction;
-	public DumbBot(PillowArray pA)
+{	
+	public DumbBot(PillowArray arr)
 	{
-		super(pA); //Just call super constructer
-		direction = 1;
+		super(arr);
 	}
-	
-	//Make the "min" and "max" change
-	@Override
-	public void moveX(double amt)
-	{
-		super.moveX(amt);
-	}
-	
+
 	public void decide()
 	{
+		moveX(AnimateListener.DELAY * AnimateListener.MOVE_SPEED / 1000);
 	}
 }
