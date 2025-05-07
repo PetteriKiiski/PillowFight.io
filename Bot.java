@@ -1,12 +1,20 @@
 //This is the super-class for ALL BOTS
 //This is abstract, and must be inherited
+//This is the super class of all bots
+//The really cool thing is that you can
+//write your own "decisions" if you know how to 
+//inherit this class and use it's variables
+//and methods.
 import java.awt.Graphics;
 import java.awt.Color;
 
 abstract class Bot
 {
 	//Coordinates:
-	private double x, y;
+	protected double x, y;
+	
+	//Required solution to "Math problem"
+	protected int num;
 	
 	//PillowArray: stores all the pillows
 	PillowArray pillows;
@@ -16,6 +24,8 @@ abstract class Bot
 		
 		x = 100;
 		y = 100;
+		
+		num = 0;
 	}
 	
 	//Decide what you are going to do
@@ -43,7 +53,7 @@ abstract class Bot
 	public void paintBot(Graphics g)
 	{
 		g.setColor(new Color(255, 0, 0));
-		g.fillOval((int)x, (int)y, 100, 100);
+		g.fillOval((int)x - 50, (int)y - 50, 100, 100); //You are at the center of the bot...
 	}
 
 	//Collide with bots and the player
@@ -56,20 +66,60 @@ abstract class Bot
 		//really simple
 		if (y >= Pillow.MAX_Y)
 		{
-			y -= Pillow.MAX_Y + 50; //See, without this, the pillows appear to "pop" out of nowhere
+			y -= Pillow.MAX_Y + 50;
 		}
-		else if (y <= -100)
+		else if (y <= -50)
 		{
 			y += Pillow.MAX_Y;
 		}
 
 		if (x >= Pillow.MAX_X)
 		{
-			x -= Pillow.MAX_X + 100;
+			x -= Pillow.MAX_X + 50;
 		}
-		else if (x <= -100)
+		else if (x <= -50)
 		{
 			x += Pillow.MAX_X;
+		}
+	}
+	
+	//Very helpful method: just moves in the direction.
+	public void moveToward(double to_x, double to_y)
+	{
+		double amt = AnimateListener.MOVE_SPEED * AnimateListener.DELAY / 1000;
+	
+		//To ensure everything is only moved once
+		boolean dontMoveX = false;
+		boolean dontMoveY = false;
+		
+		if (to_x <= amt && to_x >= -amt) //Don't overshoot if you can reach
+		{
+			x += to_x;
+			dontMoveX = true;
+		}
+		if (to_y <= amt && to_y >= -amt)
+		{
+			y += to_y;
+			dontMoveY = true;
+		}
+		
+		
+		//Move, if we haven't already
+		if (to_x > 0 && !dontMoveX)
+		{
+			x += amt;
+		}	
+		else if (to_x < 0 && !dontMoveX)
+		{	
+			x -= amt;
+		}
+		if (to_y > 0 && !dontMoveY)
+		{
+			y += amt;
+		}
+		else if(to_y < 0 && !dontMoveY)
+		{
+			y -= amt;
 		}
 	}
 }
