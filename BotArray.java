@@ -47,7 +47,14 @@ public class BotArray
 	{
 		for (int i = 0; i < bots.length; i++)
 		{
-			bots[i].decide(); //They will move... or not, their choice.
+			try
+			{
+				bots[i].decide(); //They will move... or not, their choice.
+			}
+			catch (NotAPillowException err)
+			{
+				System.err.println("ERROR: There was an error deciding what the bot is to do");
+			}
 		}
 	}
 }

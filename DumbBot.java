@@ -1,12 +1,16 @@
 public class DumbBot extends Bot
-{	
-	public DumbBot(PillowArray arr)
+{
+	public DumbBot(PillowArray pA)
 	{
-		super(arr);
+		super(pA); //Just call super constructer
 	}
-
-	public void decide()
+	
+	public void decide() throws NotAPillowException
 	{
-		moveX(AnimateListener.DELAY * AnimateListener.MOVE_SPEED / 1000);
+		CycledPillow closest = pillows.getClosestTo((int)x, (int)y, num);
+		if (closest.exists())
+		{
+			moveToward(closest.getX() - x, closest.getY() - y);
+		}
 	}
 }

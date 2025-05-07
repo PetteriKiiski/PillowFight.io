@@ -179,119 +179,85 @@ public class Pillow
 	{
 		return throwing;
 	}
+	
+	public int getX()
+	{
+		return (int)x;
+	}
+	
+	public int getY()
+	{
+		return (int)y;
+	}
+	
+	public boolean numberIs(int i)
+	{
+		return num == i;
+	}
 }
 
-//Contains all the pillows that exist
-class PillowArray
+//This contains the coordinates of a kind of cycled pillow. Used by bots for directional, cycled pillow motion
+class CycledPillow
 {
-	private Pillow[] pillows;
-	
-	int pickedUp = -1;
+	Pillow pillow;
+	private int modx;
+	private int mody;
+	private boolean existence;
 
-	//Create a customizable pillow number
-	public PillowArray(int numPillows)
+	public CycledPillow(Pillow pillowIn, int modxIn, int modyIn)
 	{
-		pillows = new Pillow[numPillows];
-		for (int i = 0; i < numPillows; i++)
-		{
-			//i % 10 ensures all digits exist in the "world"
-			pillows[i] = new Pillow(i % 10);
-		}
+		pillow = pillowIn;
+		modx = modxIn;
+		mody = modyIn;
+		existence = true;
 	}
 	
-	public void paintPillows(Graphics g)
+	//
+	public CycledPillow()
 	{
-		for (int i = 0; i < pillows.length; i++)
-		{
-			pillows[i].paintPillow(g);
-		}
+		existence = false;
 	}
-	
-	//Move ALL the pillows
-	public void moveX(double amt)
+
+	public int getX() throws NotAPillowException
 	{
-		for (int i = 0; i < pillows.length; i++)
+		if (existence)
 		{
-			if (i != pickedUp)
-			{
-				pillows[i].moveX(amt);
-			}
+			return pillow.getX() + (modx * Pillow.MAX_X); //Cycle the pillow appropriately
+		}
+		else
+		{
+			throw new NotAPillowException();
 		}
 	}
 	
-	public void moveY(double amt)
+	public int getY() throws NotAPillowException
 	{
-		for (int i = 0; i < pillows.length; i++)
+		if (existence)
 		{
-			if (i != pickedUp)
-			{
-				pillows[i].moveY(amt);
-			}
+			return pillow.getY() + (mody * Pillow.MAX_Y); //Cycle it
+		}
+		else
+		{
+			throw new NotAPillowException();
 		}
 	}
 
-	//Certain pillows will have velocity: this moves them accordingly.
-	public void movePillows()
+	public boolean exists()
 	{
-		for (int i = 0; i < pillows.length; i++)
-		{
-			pillows[i].move();
-		}
+		return existence;
+	}
+}
+
+//Exception is thrown when the pillow does not exist
+class NotAPillowException extends Exception
+{
+	NotAPillowException()
+	{
+		super("CycledPillow object represents no available pillow");
 	}
 
-	//Pick up the closest, reasonably close pillow
-	public void pickUp()
+	NotAPillowException(String message)
 	{
-		double closest = 200; //The maximum legal distance for picking up
-		int index = -1;
-
-		double currentDist;
-		for (int i = 0; i < pillows.length; i++)
-		{
-			currentDist = pillows[i].getDist(500, 400);
-			//Make sure it's an appropriate distance(ensured by the closest's initial value)
-			//AND it the closest pillow
-			//AND it isn't just the same pillow we are already holding
-			if (currentDist <= closest && i != pickedUp)
-			{
-				index = i;
-				closest = currentDist;
-			}
-		}
-
-		//If there is a close pillow, which is not being thrown
-		if (index != -1 && !pillows[index].beingThrown())
-		{
-			//Drop the current pillow, if there is one: there shouldn't be though
-			if (pickedUp != -1)
-			{
-				pillows[pickedUp].drop();
-			}
-
-			//Then pick it up
-			pickedUp = index;
-			pillows[pickedUp].setPicked();
-		}
-	}
-
-	//Show the picked up pillow, presumably above everything else
-	public void showPickedUp(Graphics g)
-	{
-		//Make sure SOMETHING is picked up
-		if (pickedUp != -1)
-		{
-			pillows[pickedUp].paintPillow(g);
-		}
-	}
-
-	public void throwPillow(int x, int y) //Mouse coordinates indicate direction: however, they are modified to represent distance from center
-	{
-		pillows[pickedUp].throwPillow(x - 540, y - 440); //Throws the picked up pillow
-		pickedUp = -1;
-	}
-
-	public boolean holdingPillow()
-	{
-		return pickedUp != -1; //Returns false if not holding pillow, true if it is.
+		super(message);
 	}
 }
