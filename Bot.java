@@ -28,7 +28,7 @@ abstract class Bot
 
 		x = Math.random() * Pillow.MAX_X;
 		y = Math.random() * Pillow.MAX_Y;
-		
+
 		num = (int)(Math.random() * 10); //The range is 0-9, not 0-10
 	}
 	
@@ -68,14 +68,14 @@ abstract class Bot
 		}
 	}
 
-	//Pick up the pillow!
-	public void pickUp(Pillow pillow)
+	//Pick up the pillow! Use CycledPillow to get an accurate distance
+	public void pickUp(CycledPillow pillow)
 	{
-		if (!pickedUp.exists())
+		if (!pickedUp.exists() && pillow.exists());
 		{
 			if (pillow.setPicked((int)x, (int)y))
 			{
-				pickedUp = pillow;
+				pickedUp = pillow.getPillow();
 			}	
 		}	
 	}

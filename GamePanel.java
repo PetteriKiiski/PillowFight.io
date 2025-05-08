@@ -57,8 +57,8 @@ public class GamePanel extends JPanel
 		immune = true;
 		
 		setFocusable(true);
-		pillows = new PillowArray(90);
-		bots = new BotArray(20, pillows);
+		pillows = new PillowArray(90); //90
+		bots = new BotArray(2, pillows); //20
 		aL = new AnimateListener(this, pillows, bots);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener

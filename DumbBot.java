@@ -11,7 +11,7 @@ public class DumbBot extends Bot
 		if (closest.exists() & !pickedUp.exists()) //Search and pick up a pillow
 		{
 			moveToward(closest.getX() - x, closest.getY() - y);
-			pickUp(closest.getPillow());
+			pickUp(closest);
 		}
 		else if (!closest.exists())
 		{

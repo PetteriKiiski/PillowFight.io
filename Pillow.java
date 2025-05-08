@@ -47,7 +47,7 @@ public class Pillow
 		//Generate the pillow's position
 		x = MAX_X * Math.random();
 		y = MAX_Y * Math.random();
-	
+
 		//Initialize velocity
 		xvel = 0;
 		yvel = 0;
@@ -157,15 +157,15 @@ public class Pillow
 
 	public boolean setPicked() //For the player.
 	{
-		return setPicked(500, 400); //Same thing, just the default function
+		return setPicked(500, 400, new CycledPillow(this, 0, 0)); //Same thing, just the default function. No cycling for default
 	}
 
 	//Returns if the pillow was successfully picked up
-	public boolean setPicked(int atX, int atY) //For bots
+	public boolean setPicked(int atX, int atY, CycledPillow pillow) //For bots. This method is called by the CycledPillow class
 	{
 		try
 		{
-			if (existence & getDist(atX, atY) <= 200 & !throwing) //make sure it's reasonably close
+			if (existence & getDist(pillow.getX(), pillow.getY()) <= 200 & !throwing) //make sure it's reasonably close
 			{
 				picked = true;
 				x = atX + 15;
@@ -413,6 +413,21 @@ class CycledPillow
 		}
 		return new Pillow();
 	}
+
+	public boolean setPicked(int atX, int atY)
+	{
+		if (existence)
+		{
+			return pillow.setPicked(atX, atY, this);
+		}
+		else
+		{
+			System.out.println("ERROR: Not a pillow");
+			return false;
+		}
+	}
+
+	//Picks it up. Just calls Pillow's method
 }
 
 //Exception is thrown when the pillow does not exist
