@@ -39,7 +39,7 @@ abstract class Bot
 	public void moveX(double amt)
 	{
 		x += amt;
-		cycle();
+		cycle(); //Cycle the bot!
 	}
 
 	public void moveY(double amt)
@@ -48,9 +48,36 @@ abstract class Bot
 		cycle();
 	}
 
+	//This differs from moveX() : This is since when the bot moves, the pillow needs to move with it, not when the player moves.
+	//This should only be used by the bot's decisions, so it is protected
+	protected void changeX(double amt)
+	{
+		moveX(amt);
+		if (pickedUp.exists())
+		{
+			pickedUp.moveX(amt);
+		}
+	}
+
+	protected void changeY(double amt)
+	{
+		moveY(amt);
+		if (pickedUp.exists())
+		{
+			pickedUp.moveY(amt);
+		}
+	}
+
+	//Pick up the pillow!
 	public void pickUp(Pillow pillow)
 	{
-		
+		if (!pickedUp.exists())
+		{
+			if (pillow.setPicked((int)x, (int)y))
+			{
+				pickedUp = pillow;
+			}	
+		}	
 	}
 
 	//The simplest method
@@ -98,12 +125,12 @@ abstract class Bot
 		
 		if (to_x <= amt && to_x >= -amt) //Don't overshoot if you can reach
 		{
-			x += to_x;
+			changeX(to_x);
 			dontMoveX = true;
 		}
 		if (to_y <= amt && to_y >= -amt)
 		{
-			y += to_y;
+			changeY(to_y);
 			dontMoveY = true;
 		}
 		
@@ -111,19 +138,19 @@ abstract class Bot
 		//Move, if we haven't already
 		if (to_x > 0 && !dontMoveX)
 		{
-			x += amt;
+			changeX(amt);
 		}	
 		else if (to_x < 0 && !dontMoveX)
 		{	
-			x -= amt;
+			changeX(-amt);
 		}
 		if (to_y > 0 && !dontMoveY)
 		{
-			y += amt;
+			changeY(amt);
 		}
 		else if(to_y < 0 && !dontMoveY)
 		{
-			y -= amt;
+			changeY(-amt);
 		}
 	}
 }

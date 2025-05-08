@@ -35,9 +35,15 @@ public class Pillow
 	//Can be used to represent the lack of a real pillow
 	private boolean existence;
 
+	//Is the pillow picked up?
+	private boolean picked;
+
 	//Constructor: takes in the number
 	public Pillow (int numIn)
 	{
+		//Set its picked state
+		picked = false;
+
 		//Generate the pillow's position
 		x = MAX_X * Math.random();
 		y = MAX_Y * Math.random();
@@ -51,13 +57,27 @@ public class Pillow
 
 		//The number on it
 		num = numIn;
-
+		
+		//This pillow exists
 		existence = true;
 	}
 	
 	public Pillow()
 	{
+		//Indicates this is the lack of a pillow
 		existence = false;	
+	}
+
+	public boolean isPicked()
+	{
+		if (existence)
+		{
+			return picked;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	public boolean exists()
@@ -68,14 +88,28 @@ public class Pillow
 	//Paints the pillow
 	public void paintPillow(Graphics g)
 	{
-		//Simply draws a square, which represents the pillow
-		g.setColor(new Color(255, 255, 0));
-		g.fillRect((int)x, (int)y, 50, 50);
-		
-		//Draw the number on the pillow
-		g.setColor(new Color(0, 0, 0));
-		g.setFont(new Font("Arial", Font.PLAIN, 25));
-		g.drawString(Integer.toString(num), (int)x+15, (int)y+38);
+		if (existence)
+		{
+			//Simply draws a square, which represents the pillow
+			if (picked)
+			{
+				g.setColor(new Color(0, 255, 0));
+			}
+			else
+			{
+				g.setColor(new Color(255, 255, 0));
+			}
+			g.fillRect((int)x, (int)y, 50, 50);
+			
+			//Draw the number on the pillow
+			g.setColor(new Color(0, 0, 0));
+			g.setFont(new Font("Arial", Font.PLAIN, 25));
+			g.drawString(Integer.toString(num), (int)x+15, (int)y+38);
+		}
+		else
+		{
+			System.err.println("ERROR: This is not a pillow");
+		}
 	}
 	
 	//Move the pillow: both of these
@@ -121,38 +155,49 @@ public class Pillow
 		}
 	}
 
-	//Doesn't actually set a boolean: changes location
-	public void setPicked() //For the player.
+	public boolean setPicked() //For the player.
 	{
-		if (existence)
-		{
-			x = 515;
-			y = 415;
-		}
-		else
-		{
-			System.err.println("ERROR: This is not a pillow");
-		}
+		return setPicked(500, 400); //Same thing, just the default function
 	}
 
-	public void setPicked(int atX, int atY) //For bots
+	//Returns if the pillow was successfully picked up
+	public boolean setPicked(int atX, int atY) //For bots
 	{
-		if (existence)
+		try
 		{
-			x = atX + 15;
-			y = atY + 15;
+			if (existence & getDist(atX, atY) <= 200 & !throwing) //make sure it's reasonably close
+			{
+				picked = true;
+				x = atX + 15;
+				y = atY + 15;
+				System.out.println("Hi. We have changed");
+				return true;
+			}
+			else if (!existence)
+			{
+				System.err.println("ERROR: This is not a pillow");
+				return false;
+			}
+			else if (getDist(atX, atY) <= 200 || throwing) //Not successfully picked in this case
+			{
+				return false;
+			}
 		}
-		else
+		catch (NotAPillowException err)
 		{
 			System.err.println("ERROR: This is not a pillow");
+			return false;
 		}
+		return false; //At this point, nothing was returned
 	}
 
 	//Also just changes location
+	//Probably won't be used anymore, but I will keep this here, incase something needs or wants it
 	public void drop()
 	{
 		if (existence)
 		{
+			picked = false;
 			x = 530;
 			y = 480;
 		}
@@ -176,6 +221,7 @@ public class Pillow
 		 */
 		if (!throwing & existence) //Just a safety check
 		{
+			picked = false;
 			double hypot = Math.sqrt(Math.pow(to_x, 2) + Math.pow(to_y, 2));
 			xvel = to_x * PILLOW_SPEED / hypot;
 			yvel = to_y * PILLOW_SPEED / hypot;
@@ -352,6 +398,20 @@ class CycledPillow
 	public boolean exists()
 	{
 		return existence;
+	}
+
+	//If the bot needs to interact with the pillow itself for some reason.
+	public Pillow getPillow()
+	{
+		if (existence)
+		{
+			return pillow;
+		}
+		else
+		{
+			System.out.println("ERROR: Not a pillow");
+		}
+		return new Pillow();
 	}
 }
 

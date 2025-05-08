@@ -60,6 +60,7 @@ public class PillowArray
 	}
 
 	//Pick up the closest, reasonably close pillow
+	//This doesn't use get closest because getClosest is a bit more complicated than necessary
 	public void pickUp()
 	{
 		double closest = 200; //The maximum legal distance for picking up
@@ -70,14 +71,17 @@ public class PillowArray
 		{
 			try
 			{
-				currentDist = pillows[i].getDist(500, 400);
-				//Make sure it's an appropriate distance(ensured by the closest's initial value)
-				//AND it the closest pillow
-				//AND it isn't just the same pillow we are already holding
-				if (currentDist <= closest && i != pickedUp)
+				if (!pillows[i].isPicked())
 				{
-					index = i;
-					closest = currentDist;
+					currentDist = pillows[i].getDist(500, 400);
+					//Make sure it's an appropriate distance(ensured by the closest's initial value)
+					//AND it the closest pillow
+					//AND it isn't just the same pillow we are already holding
+					if (currentDist <= closest && i != pickedUp)
+					{
+						index = i;
+						closest = currentDist;
+					}
 				}
 			}
 			catch (NotAPillowException err) {System.out.println("Huh?");} //This exception should never be thrown
@@ -92,17 +96,19 @@ public class PillowArray
 				pillows[pickedUp].drop();
 			}
 
-			//Then pick it up
-			pickedUp = index;
-			pillows[pickedUp].setPicked();
+			//then pick it up
+			if (pillows[index].setPicked())
+			{
+				pickedUp = index;
+			}
 		}
 	}
 
 	//Helpful for the bot's implementation, and the required number. This number simulates the math problem
 	public CycledPillow getClosestTo(int at_x, int at_y, int num)
 	{
-		double closest = -1; //Just get a certain pillow's distance. If it's correct, we are kind of lucky
-		int index = -1; //Use this pillow just because we need some preset one.
+		double closest = -1; //The distance of the closest(so far)
+		int index = -1; //The closest's index
 		double tempDist = -1; //This is used to check each possible distance
 		double currentDist = -1; //This is the "working" distance of the bot from the pillow
 		int closestModX = -2; //The modification of the coordinates based on the cycling
@@ -153,24 +159,26 @@ public class PillowArray
 				}
 			}
 		}
-		CycledPillow myPillow = new CycledPillow(); //Indicates no pillow could be found
+		CycledPillow returnPillow = new CycledPillow(); //Indicates no pillow could be found
 		if (index != -1)
 		{
-			myPillow = new CycledPillow(pillows[index], -closestModX, -closestModY); //We use minus because this is representing a modified PILLOW POSITION
+			returnPillow = new CycledPillow(pillows[index], -closestModX, -closestModY); //We use minus because this is representing a modified PILLOW POSITION
 												      //However, previously we modified the PLAYER POSITION
 												      //So, It's really in the opposite direction
 		}
-		return myPillow;
-		//return new CycledPillow(pillows[index], closestModX, closestModY); //Return the closest pillow
+		return returnPillow;
 	}
 	
 	//Show the picked up pillow, presumably above everything else
 	public void showPickedUp(Graphics g)
 	{
-		//Make sure SOMETHING is picked up
-		if (pickedUp != -1)
+		for (int i = 0; i < pillows.length; i++)
 		{
-			pillows[pickedUp].paintPillow(g);
+			//Make sure SOMETHING is picked up
+			if (pillows[i].isPicked())
+			{
+				pillows[i].paintPillow(g);
+			}
 		}
 	}
 
