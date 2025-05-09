@@ -1,6 +1,4 @@
-//BotArray.java : BotArray class
-//Note, none of these are directly BOTS, but they are from subclasses
-//This is why it's not in Bot.java
+//BotArray.java : stores all the bots
 import java.awt.Graphics;
 
 public class BotArray
@@ -8,14 +6,14 @@ public class BotArray
 	private Bot[] bots;
 	private PillowArray pillows;
 
-	public BotArray(int numBots, PillowArray pillowsIn)
+	public BotArray(int numBots, PillowArray pillowsIn, int miss)
 	{
 		pillows = pillowsIn;
 		bots = new Bot[numBots];
 
 		for (int i = 0; i < numBots; i++)
 		{
-			bots[i] = new DumbBot(pillows); //I would make it a loop, but it's a bit too complicated for my liking.
+			bots[i] = new DumbBot(pillows, miss); //I would make it a loop, but it's a bit too complicated for my liking.
 		}
 	}
 	

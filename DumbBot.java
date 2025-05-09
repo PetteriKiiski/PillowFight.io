@@ -1,8 +1,15 @@
 public class DumbBot extends Bot
 {
-	public DumbBot(PillowArray pA)
+	private int directionX;
+	private int directionY;
+	private int timeCounter;
+	
+	public DumbBot(PillowArray pA, int miss)
 	{
-		super(pA); //Just call super constructer
+		super(pA, miss); //Just call super constructer
+		directionX = (int)(Math.random() * 3) - 1;
+		directionY = (int)(Math.random() * 3) - 1;
+		timeCounter = 0;
 	}
 	
 	public void decide() throws NotAPillowException
@@ -13,9 +20,19 @@ public class DumbBot extends Bot
 			moveToward(closest.getX() - x, closest.getY() - y);
 			pickUp(closest);
 		}
-		else if (!closest.exists())
+		else
 		{
-			System.out.println("Nothing close enough :(");
+			changeX(directionX * AnimateListener.MOVE_SPEED * AnimateListener.DELAY / 1000);
+			changeY(directionY * AnimateListener.MOVE_SPEED * AnimateListener.DELAY / 1000);
+			timeCounter++;
+		}
+		
+		//Throw decision
+		if (pickedUp.exists() && timeCounter >= 3000 / AnimateListener.DELAY)
+		{
+			System.out.println("HEEY!!!");
+			throwPillow(x - directionX, y - directionY);
+			timeCounter = 0;
 		}
 	}
 }

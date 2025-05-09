@@ -91,14 +91,7 @@ public class Pillow
 		if (existence)
 		{
 			//Simply draws a square, which represents the pillow
-			if (picked)
-			{
-				g.setColor(new Color(0, 255, 0));
-			}
-			else
-			{
-				g.setColor(new Color(255, 255, 0));
-			}
+			g.setColor(new Color(255, 255, 0));
 			g.fillRect((int)x, (int)y, 50, 50);
 			
 			//Draw the number on the pillow
@@ -141,7 +134,7 @@ public class Pillow
 		}
 	}
 
-	//Returns the distance from the "player", or the center of the screen
+	//Returns the distance from the location, or the center of the screen
 	//Also, we use the center of the square
 	public double getDist(double locx, double locy) throws NotAPillowException
 	{
@@ -165,12 +158,10 @@ public class Pillow
 	{
 		try
 		{
-			if (existence & getDist(pillow.getX(), pillow.getY()) <= 200 & !throwing) //make sure it's reasonably close
+			if (existence && !picked && pillow.getDist(atX, atY) <= 200 & !throwing) //make sure it's reasonably close
 			{
 				picked = true;
-				x = atX + 15;
-				y = atY + 15;
-				System.out.println("Hi. We have changed");
+				moveToPicked(atX, atY);
 				return true;
 			}
 			else if (!existence)
@@ -178,7 +169,7 @@ public class Pillow
 				System.err.println("ERROR: This is not a pillow");
 				return false;
 			}
-			else if (getDist(atX, atY) <= 200 || throwing) //Not successfully picked in this case
+			else if (getDist(pillow.getX(), pillow.getY()) > 200 || throwing) //Not successfully picked in this case
 			{
 				return false;
 			}
@@ -189,6 +180,13 @@ public class Pillow
 			return false;
 		}
 		return false; //At this point, nothing was returned
+	}
+
+	//Moves it to the spot where it is picked
+	public void moveToPicked(double atX, double atY)
+	{
+		x = atX + 15;
+		y = atY + 15;
 	}
 
 	//Also just changes location
@@ -208,7 +206,7 @@ public class Pillow
 	}
 
 	//Sets a velocity: takes in distance from center, uses to calculate velocity
-	public void throwPillow(int to_x, int to_y)
+	public void throwPillow(double to_x, double to_y)
 	{
 		/*
 		 * Here are my calculations:
@@ -414,6 +412,7 @@ class CycledPillow
 		return new Pillow();
 	}
 
+	//Just calls the pillows method and returns it's output
 	public boolean setPicked(int atX, int atY)
 	{
 		if (existence)
@@ -422,12 +421,23 @@ class CycledPillow
 		}
 		else
 		{
-			System.out.println("ERROR: Not a pillow");
 			return false;
 		}
 	}
 
-	//Picks it up. Just calls Pillow's method
+	//Returns the distance from the location
+	//This is basically copy-pasted from the Pillow class
+	public double getDist(double locx, double locy) throws NotAPillowException
+	{
+		if (existence)
+		{
+			return Math.sqrt(Math.pow(locx - getX() + 25, 2) + Math.pow(locy - getY() + 25, 2));
+		}
+		else
+		{
+			throw new NotAPillowException();
+		}
+	}
 }
 
 //Exception is thrown when the pillow does not exist

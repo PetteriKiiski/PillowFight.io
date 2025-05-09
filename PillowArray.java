@@ -129,7 +129,7 @@ public class PillowArray
 			 * Take the one that is closest to the position.
 			 * This will be the true distance.
 			 */
-			if (i != -1 && i != pickedUp && pillows[i].numberIs(num)) //Don't see the pickedUp pillows the same way as the others.
+			if (i != -1 && i != pickedUp && !pillows[i].isPicked() && pillows[i].numberIs(num)) //Don't see the pickedUp pillows the same way as the others.
 			{
 				for (int xmod = -1; xmod <= 1; xmod++)
 				{
@@ -184,7 +184,7 @@ public class PillowArray
 
 	public void throwPillow(int x, int y) //Mouse coordinates indicate direction: however, they are modified to represent distance from center
 	{
-		pillows[pickedUp].throwPillow(x - 540, y - 440); //Throws the picked up pillow
+		pillows[pickedUp].throwPillow((double)x - 540, (double)y - 440); //Throws the picked up pillow
 		pickedUp = -1;
 	}
 

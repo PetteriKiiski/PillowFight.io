@@ -16,19 +16,31 @@ abstract class Bot
 	//Required solution to "Math problem"
 	protected int num;
 	
+	//Accuracy of the bot: this modifies the difficulty of the game
+	int miss;
+	
 	//PillowArray: stores all the pillows
 	PillowArray pillows;
 
+	//BotArray: stores all the bots AND a kind of player bot
+	BotArray bots;
+
 	Pillow pickedUp;
 
-	public Bot(PillowArray pA) {
+	public Bot(PillowArray pA, int missIn) {
+		//PillowArray
 		pillows = pA;
 		
+		//The picked Up  pillow
 		pickedUp = new Pillow(); 
 
+		//The location
 		x = Math.random() * Pillow.MAX_X;
 		y = Math.random() * Pillow.MAX_Y;
-
+		
+		miss = missIn; //The amount the bot misses by
+		
+		//The random number
 		num = (int)(Math.random() * 10); //The range is 0-9, not 0-10
 	}
 	
@@ -55,7 +67,7 @@ abstract class Bot
 		moveX(amt);
 		if (pickedUp.exists())
 		{
-			pickedUp.moveX(amt);
+			pickedUp.moveToPicked(x, y);
 		}
 	}
 
@@ -64,7 +76,7 @@ abstract class Bot
 		moveY(amt);
 		if (pickedUp.exists())
 		{
-			pickedUp.moveY(amt);
+			pickedUp.moveToPicked(x, y);
 		}
 	}
 
@@ -76,8 +88,33 @@ abstract class Bot
 			if (pillow.setPicked((int)x, (int)y))
 			{
 				pickedUp = pillow.getPillow();
+				num = (int)(Math.random() * 10); //Change the number
 			}	
-		}	
+		}
+	}
+	
+	//Throw the pillow. This is quite simple actually, since it was already implemented
+	public void throwPillow(double toX, double toY)
+	{
+		//Randomness in accuracy of throw: this is in DEGREES
+		//Some trig needed in this!
+		//Here's the math
+		//angle = arctan(toY/toX)
+		//then, add the random degree to this angle
+		//arctan(toY/toX) + randomness
+		//then, convert them both back, using cos or sin
+		//X = cos(arctan(toY / toX) + randomness)
+		//Y = sin(arctan(toY / toX) + randomness)
+		//
+		// By this, we randomly change the angle!
+		
+		//Randomize the angle
+		int randomX = (int)(Math.random() * 2 * miss) - miss;
+		int randomY = (int)(Math.random() * 2 * miss) - miss;
+
+		//Use the math
+		pickedUp.throwPillow(Math.cos(Math.atan(((int)(toX - x))) + randomX), Math.sin(Math.atan(((int)(toY - y))) + randomY));
+		pickedUp = new Pillow(); //We are no longer holding a pillow
 	}
 
 	//The simplest method
