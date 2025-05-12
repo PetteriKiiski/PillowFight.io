@@ -113,7 +113,26 @@ abstract class Bot
 		int randomY = (int)(Math.random() * 2 * miss) - miss;
 
 		//Use the math
-		pickedUp.throwPillow(Math.cos(Math.atan(((int)(toX - x))) + randomX), Math.sin(Math.atan(((int)(toY - y))) + randomY));
+		if (toX - x != 0) //No zero division!
+		{
+			pickedUp.throwPillow(Math.cos(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomX), Math.sin(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomY));
+		}
+		else //The angle is pi/2 radians or 3pi/2 radians in this case, depending on the y
+		{
+			if (toY - y > 0)
+			{
+				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
+			}
+			else if (toY - y < 0)
+			{
+				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
+			}
+			else //We want to stay still, choose a random direction
+			{
+				double randomAngle = Math.random() * 2 * Math.PI;
+				pickedUp.throwPillow(Math.cos(randomAngle), Math.sin(randomAngle));
+			}
+		}
 		pickedUp = new Pillow(); //We are no longer holding a pillow
 	}
 
@@ -190,4 +209,154 @@ abstract class Bot
 			changeY(-amt);
 		}
 	}
+	
+	//Helpful for the bot's implementation. Modified-copypasted from Pillow.java
+	public CycledBot getClosestTo(int at_x, int at_y, int num, Bot isBot)
+	{
+		double closest = -1; //The distance of the closest(so far)
+		int index = -1; //The closest's index
+		double tempDist = -1; //This is used to check each possible distance
+		double currentDist = -1; //This is the "working" distance of the bot from the bot
+		int closestModX = -2; //The modification of the coordinates based on the cycling
+		int closestModY = -2;
+		int currentModX = -2;
+		int currentModY = -2;
+		//That is, the distance of the pillow that is being currently checked
+		for (int i = 0; i < pillows.length; i++)
+		{
+			//The reason for all this xmod behavior is to manage the cyclical behavior
+			//Get the closest based on all these nine possible positions
+			/*
+			 * X \ X / X
+			 * X - O - X
+			 * X / X \ X
+			 * 
+			 * where O is the "actual" position.
+			 * Take the one that is closest to the position.
+			 * This will be the true distance.
+			 */
+			if ( && bots[i].numberIs(num))
+			{
+				for (int xmod = -1; xmod <= 1; xmod++)
+				{
+					for (int ymod = -1; ymod <= 1; ymod++)
+					{
+						try
+						{
+							//MAX_X is the amount everything loops by (same with MAX_Y on the y-axis)
+							tempDist = pillows[i].getDist(at_x + (xmod * Pillow.MAX_X), at_y + (ymod * Pillow.MAX_Y));
+							//Only really consider how close the "looped" pillow is if we have looped yet
+							if ((xmod == -1 && ymod == -1) || (tempDist <= currentDist)) //If it's closer than a looped version, then that's the "real distance"
+							{
+								currentDist = tempDist;
+								currentModX = xmod; //Remember how much cycling and the direction occured, so that the bot knows which way to go
+								currentModY = ymod;
+							}
+						}
+						catch (NotAPillowException err) {} //Should never really occur
+					}
+				}
+				if (currentDist <= closest || closest == -1) //If no pillows have been checked, this is closest by default
+				{
+					closest = currentDist;
+					closestModX = currentModX;
+					closestModY = currentModY;
+					index = i;
+				}
+			}
+		}
+		CycledPillow returnPillow = new CycledPillow(); //Indicates no pillow could be found
+		if (index != -1)
+		{
+			returnPillow = new CycledPillow(pillows[index], -closestModX, -closestModY); //We use minus because this is representing a modified PILLOW POSITION
+												      //However, previously we modified the PLAYER POSITION
+												      //So, It's really in the opposite direction
+		}
+		return returnPillow;
+	}
+
 }
+
+//A cycling bot
+class CycledBot
+{
+	Bot bot;
+	private int modx;
+	private int mody;
+	private boolean existence;
+
+	public CycledBot(bot botIn, int modxIn, int modyIn)
+	{
+		bot = botIn;
+		modx = modxIn;
+		mody = modyIn;
+		existence = true;
+	}
+	
+	//
+	public CycledBot()
+	{
+		existence = false;
+	}
+
+	public int getX()
+	{
+		if (existence)
+		{
+			return bot.getX() + (modx * Pillow.MAX_X); //Cycle the bot appropriately
+		}
+		else
+		{
+			System.out.println("ERROR: This bot does not exist");
+		}
+		return -1;
+	}
+	
+	public int getY() throws NotAPillowException
+	{
+		if (existence)
+		{
+			return bot.getY() + (mody * Pillow.MAX_Y); //Cycle it
+		}
+		else
+		{
+			System.out.println("ERROR: This bot does not exist");
+		}
+		return -1;
+	}
+
+	public boolean exists()
+	{
+		return existence;
+	}
+
+	//If the bot needs to interact with the bot itself for some reason.
+	public Pillow getPillow()
+	{
+		if (existence)
+		{
+			return bot;
+		}
+		else
+		{
+			System.out.println("ERROR: Not a bot");
+		}
+		return new Bot();
+	}
+
+	//Returns the distance from the location
+	//This is basically copy-pasted from the Pillow class
+	public double getDist(double locx, double locy)
+	{5
+		if (existence)
+		{
+			return Math.sqrt(Math.pow(locx - getX() + 25, 2) + Math.pow(locy - getY() + 25, 2));
+		}
+		else
+		{
+			System.out.println("This is not a bot!"):
+		}
+		return -1.0;
+	}
+}
+

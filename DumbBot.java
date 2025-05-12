@@ -30,10 +30,8 @@ public class DumbBot extends Bot
 		//Throw decision
 		if (pickedUp.exists() && timeCounter >= 3000 / AnimateListener.DELAY)
 		{
-			System.out.println("HEEY!!!");
 			throwPillow(x - directionX, y - directionY);
 			timeCounter = 0;
 		}
 	}
 }
-
