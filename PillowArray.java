@@ -5,13 +5,16 @@ import java.awt.Graphics;
 public class PillowArray
 {
 	private Pillow[] pillows;
+	private PlayerBot player; //To set the pillow
 	
 	int pickedUp = -1; //This specially indicates the pillow pickedUp by the player
 
 	//Create a customizable pillow number
-	public PillowArray(int numPillows)
+	public PillowArray(int numPillows, PlayerBot playerIn)
 	{
 		pillows = new Pillow[numPillows];
+		player = playerIn;
+		
 		for (int i = 0; i < numPillows; i++)
 		{
 			//i % 10 ensures all digits exist in the "world"
@@ -100,6 +103,7 @@ public class PillowArray
 			if (pillows[index].setPicked())
 			{
 				pickedUp = index;
+				player.setPicked(pillows[index]);
 			}
 		}
 	}
@@ -186,6 +190,7 @@ public class PillowArray
 	{
 		pillows[pickedUp].throwPillow((double)x - 540, (double)y - 440); //Throws the picked up pillow
 		pickedUp = -1;
+		player.setPicked(new Pillow()); //Set it to empty
 	}
 
 	public boolean holdingPillow()

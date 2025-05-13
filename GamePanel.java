@@ -57,8 +57,9 @@ public class GamePanel extends JPanel
 		immune = true;
 		
 		setFocusable(true);
-		pillows = new PillowArray(90);
-		bots = new BotArray(20, pillows, (int)(Math.PI / 8)); //miss represents the difficulty. In radians
+		PlayerBot player = new PlayerBot();
+		pillows = new PillowArray(90, player);
+		bots = new BotArray(20, pillows, (int)(Math.PI / 8), player); //miss represents the difficulty. In radians. Player represents the player
 		aL = new AnimateListener(this, pillows, bots);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener
@@ -141,6 +142,7 @@ public class GamePanel extends JPanel
 			{
 				requestFocusInWindow();
 				immune = false;
+				bots.setImmunity(false);
 			}
 		}
 		public void mouseClicked(MouseEvent evt) {}

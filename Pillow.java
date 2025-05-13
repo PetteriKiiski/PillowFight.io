@@ -227,7 +227,7 @@ public class Pillow
 		}
 		else if(!existence)
 		{
-			System.err.println("ERROR: This is not a pillow");
+			System.err.println("ERROR: This is not a pillow ZZ");
 		}
 	}
 

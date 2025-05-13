@@ -5,10 +5,12 @@
 //write your own "decisions" if you know how to 
 //inherit this class and use it's variables
 //and methods.
+
+//It's not abstact because we sometimes need some empty bots
 import java.awt.Graphics;
 import java.awt.Color;
 
-abstract class Bot
+public class Bot
 {
 	//Coordinates:
 	protected double x, y;
@@ -25,11 +27,29 @@ abstract class Bot
 	//BotArray: stores all the bots AND a kind of player bot
 	BotArray bots;
 
-	Pillow pickedUp;
+	public Pillow pickedUp; //This is public: you can see it
 
-	public Bot(PillowArray pA, int missIn) {
+	//For the PlayerBot
+	protected boolean isPlayer;
+	protected boolean immune;
+
+	//For reality checking
+    protected boolean existence; //Does it exist?
+
+	public Bot() 
+	{
+		existence = false;
+	}
+
+	public Bot(PillowArray pA, BotArray bA, int missIn) {
 		//PillowArray
 		pillows = pA;
+		
+		//BotArray
+		bots = bA;
+		
+		//Exists
+		existence = true;
 		
 		//The picked Up  pillow
 		pickedUp = new Pillow(); 
@@ -41,55 +61,137 @@ abstract class Bot
 		miss = missIn; //The amount the bot misses by
 		
 		//The random number
-		num = (int)(Math.random() * 10); //The range is 0-9, not 0-10
+		num = (int)(Math.random() * 10); //The range is 0-9, not 0-10'
+		
+		//For the player: this is default
+		isPlayer = false;
+		immune = false;
+	}
+	
+	//returns the player's immune state: does not apply to bots
+	public boolean isImmune()
+	{
+		if (existence)
+		{
+			return immune;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	//Coordinates
+	public double getX()
+	{
+		if (existence)
+		{
+			return x;
+		}
+		else
+		{
+			System.out.println("ERROR: Not a bot");
+			return -1.0; //I know this is not impossible, but it's the best I can do
+		}
+	}
+	
+	public double getY()
+	{
+		if (existence)
+		{
+			return y;
+		}
+		else
+		{
+			System.out.println("ERROR: this is not a bot");
+			return -1.0;
+		}
+	}
+	
+	//Exists?
+	public boolean exists()
+	{
+		return existence;
 	}
 	
 	//Decide what you are going to do
-	abstract void decide() throws NotAPillowException; //The child class must decide
+	public void decide() throws NotAPillowException, NotABotException {} //The child class must decide: this is just the default
 	
 	//Moves: the decide method calls these alongside vision
 	public void moveX(double amt)
 	{
-		x += amt;
-		cycle(); //Cycle the bot!
+		if (!existence)
+		{
+			System.out.println("ERROR: this is not a bot");
+		}
+		else
+		{
+			x += amt;
+			cycle(); //Cycle the bot!
+		}
 	}
 
 	public void moveY(double amt)
 	{
-		y += amt;
-		cycle();
+		if (existence)
+		{
+			y += amt;
+			cycle();
+		}
+		else
+		{
+			System.out.println("ERROR: This is not a bot");
+		}
 	}
 
 	//This differs from moveX() : This is since when the bot moves, the pillow needs to move with it, not when the player moves.
 	//This should only be used by the bot's decisions, so it is protected
 	protected void changeX(double amt)
 	{
-		moveX(amt);
-		if (pickedUp.exists())
+		if (existence)
 		{
-			pickedUp.moveToPicked(x, y);
+			moveX(amt);
+			if (pickedUp.exists())
+			{
+				pickedUp.moveToPicked(x, y);
+			}
 		}
+		else
+		{
+			System.out.println("ERROR: This is not a bot");
+		}	
 	}
 
 	protected void changeY(double amt)
 	{
-		moveY(amt);
-		if (pickedUp.exists())
+		if (existence)
 		{
-			pickedUp.moveToPicked(x, y);
+			moveY(amt);
+			if (pickedUp.exists())
+				{
+					pickedUp.moveToPicked(x, y);
+			}
+		}
+		else
+		{
+			System.out.println("ERROR: This is not a bot");
 		}
 	}
 
 	//Pick up the pillow! Use CycledPillow to get an accurate distance
 	public void pickUp(CycledPillow pillow)
 	{
-		if (!pickedUp.exists() && pillow.exists());
+		if (!pickedUp.exists() && pillow.exists() && existence)
 		{
 			if (pillow.setPicked((int)x, (int)y))
 			{
 				pickedUp = pillow.getPillow();
 				num = (int)(Math.random() * 10); //Change the number
 			}	
+		}
+		else if (!existence)
+		{
+			System.out.println("ERROR: This is not a bot");
 		}
 	}
 	
@@ -108,176 +210,149 @@ abstract class Bot
 		//
 		// By this, we randomly change the angle!
 		
+		
 		//Randomize the angle
-		int randomX = (int)(Math.random() * 2 * miss) - miss;
-		int randomY = (int)(Math.random() * 2 * miss) - miss;
+		//Currently disabled
+		//int randomX = (int)(Math.random() * 2 * miss) - miss;
+		//int randomY = (int)(Math.random() * 2 * miss) - miss;
 
 		//Use the math
-		if (toX - x != 0) //No zero division!
-		{
-			pickedUp.throwPillow(Math.cos(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomX), Math.sin(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomY));
-		}
-		else //The angle is pi/2 radians or 3pi/2 radians in this case, depending on the y
-		{
-			if (toY - y > 0)
-			{
-				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
-			}
-			else if (toY - y < 0)
-			{
-				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
-			}
-			else //We want to stay still, choose a random direction
-			{
-				double randomAngle = Math.random() * 2 * Math.PI;
-				pickedUp.throwPillow(Math.cos(randomAngle), Math.sin(randomAngle));
-			}
-		}
+		//if (toX - x != 0) //No zero division!
+		//{
+		//	pickedUp.throwPillow(Math.cos(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomX), Math.sin(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomY));
+		pickedUp.throwPillow((int)(toX - x), (int)(toY - y));
+		//}
+		//else //The angle is pi/2 radians or 3pi/2 radians in this case, depending on the y
+		//{
+		//	if (toY - y > 0)
+		//	{
+		//		pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
+		//	}
+		//	else if (toY - y < 0)
+		//	{
+		//		pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
+		//	}
+		//	else //We want to stay still, choose a random direction
+		//	{
+		//		double randomAngle = Math.random() * 2 * Math.PI;
+		//		pickedUp.throwPillow(Math.cos(randomAngle), Math.sin(randomAngle));
+		//	}
+		//}
 		pickedUp = new Pillow(); //We are no longer holding a pillow
 	}
 
 	//The simplest method
 	public void paintBot(Graphics g)
 	{
-		g.setColor(new Color(255, 0, 0));
-		g.fillOval((int)x - 50, (int)y - 50, 100, 100); //You are at the center of the bot...
-	}
+		if (existence)
+		{
+			g.setColor(new Color(255, 0, 0));
+			g.fillOval((int)x - 50, (int)y - 50, 100, 100); //You are at the center of the bot...
+		}
+		else
+		{
+			System.out.println("ERROR: Not a bot");
+		}
+	}	
 
 	//Collide with bots and the player
-	public void collide() {}
+	public void collide() {} //This is gonna be nice. Collisions will decrease health
 	
 	//Literally copy-pasted from Pillow.java
 	//With minor edits
 	public void cycle()
 	{
-		//really simple
-		if (y >= Pillow.MAX_Y)
+		if (existence)
 		{
-			y -= Pillow.MAX_Y + 50;
-		}
-		else if (y <= -50)
-		{
-			y += Pillow.MAX_Y;
-		}
+			//really simple
+			if (y >= Pillow.MAX_Y)
+			{
+				y -= Pillow.MAX_Y + 50;
+			}	
+			else if (y <= -50)
+			{
+				y += Pillow.MAX_Y;
+			}
 
-		if (x >= Pillow.MAX_X)
-		{
-			x -= Pillow.MAX_X + 50;
+			if (x >= Pillow.MAX_X)
+			{
+				x -= Pillow.MAX_X + 50;
+			}
+			else if (x <= -50)
+			{
+				x += Pillow.MAX_X;
+			}
 		}
-		else if (x <= -50)
+		else
 		{
-			x += Pillow.MAX_X;
+			System.out.println("ERROR: This is not a bot");
 		}
 	}
 	
 	//Very helpful method: just moves in the direction.
 	public void moveToward(double to_x, double to_y)
 	{
-		double amt = AnimateListener.MOVE_SPEED * AnimateListener.DELAY / 1000;
-	
-		//To ensure everything is only moved once
-		boolean dontMoveX = false;
-		boolean dontMoveY = false;
+		if (existence)
+		{
+			double amt = AnimateListener.MOVE_SPEED * AnimateListener.DELAY / 1000;
 		
-		if (to_x <= amt && to_x >= -amt) //Don't overshoot if you can reach
-		{
-			changeX(to_x);
-			dontMoveX = true;
-		}
-		if (to_y <= amt && to_y >= -amt)
-		{
-			changeY(to_y);
-			dontMoveY = true;
-		}
-		
-		
-		//Move, if we haven't already
-		if (to_x > 0 && !dontMoveX)
-		{
-			changeX(amt);
-		}	
-		else if (to_x < 0 && !dontMoveX)
-		{	
-			changeX(-amt);
-		}
-		if (to_y > 0 && !dontMoveY)
-		{
-			changeY(amt);
-		}
-		else if(to_y < 0 && !dontMoveY)
-		{
-			changeY(-amt);
-		}
-	}
-	
-	//Helpful for the bot's implementation. Modified-copypasted from Pillow.java
-	public CycledBot getClosestTo(int at_x, int at_y, int num, Bot isBot)
-	{
-		double closest = -1; //The distance of the closest(so far)
-		int index = -1; //The closest's index
-		double tempDist = -1; //This is used to check each possible distance
-		double currentDist = -1; //This is the "working" distance of the bot from the bot
-		int closestModX = -2; //The modification of the coordinates based on the cycling
-		int closestModY = -2;
-		int currentModX = -2;
-		int currentModY = -2;
-		//That is, the distance of the pillow that is being currently checked
-		for (int i = 0; i < pillows.length; i++)
-		{
-			//The reason for all this xmod behavior is to manage the cyclical behavior
-			//Get the closest based on all these nine possible positions
-			/*
-			 * X \ X / X
-			 * X - O - X
-			 * X / X \ X
-			 * 
-			 * where O is the "actual" position.
-			 * Take the one that is closest to the position.
-			 * This will be the true distance.
-			 */
-			if ( && bots[i].numberIs(num))
+			//To ensure everything is only moved once
+			boolean dontMoveX = false;
+			boolean dontMoveY = false;
+			
+			if (to_x <= amt && to_x >= -amt) //Don't overshoot if you can reach
 			{
-				for (int xmod = -1; xmod <= 1; xmod++)
-				{
-					for (int ymod = -1; ymod <= 1; ymod++)
-					{
-						try
-						{
-							//MAX_X is the amount everything loops by (same with MAX_Y on the y-axis)
-							tempDist = pillows[i].getDist(at_x + (xmod * Pillow.MAX_X), at_y + (ymod * Pillow.MAX_Y));
-							//Only really consider how close the "looped" pillow is if we have looped yet
-							if ((xmod == -1 && ymod == -1) || (tempDist <= currentDist)) //If it's closer than a looped version, then that's the "real distance"
-							{
-								currentDist = tempDist;
-								currentModX = xmod; //Remember how much cycling and the direction occured, so that the bot knows which way to go
-								currentModY = ymod;
-							}
-						}
-						catch (NotAPillowException err) {} //Should never really occur
-					}
-				}
-				if (currentDist <= closest || closest == -1) //If no pillows have been checked, this is closest by default
-				{
-					closest = currentDist;
-					closestModX = currentModX;
-					closestModY = currentModY;
-					index = i;
-				}
+				changeX(to_x);
+				dontMoveX = true;
+			}
+			if (to_y <= amt && to_y >= -amt)
+			{
+				changeY(to_y);
+				dontMoveY = true;
+			}
+		
+		
+			//Move, if we haven't already
+			if (to_x > 0 && !dontMoveX)
+			{
+				changeX(amt);
+			}	
+			else if (to_x < 0 && !dontMoveX)
+			{	
+				changeX(-amt);
+			}
+			if (to_y > 0 && !dontMoveY)
+			{
+				changeY(amt);
+			}	
+			else if(to_y < 0 && !dontMoveY)
+			{
+				changeY(-amt);
 			}
 		}
-		CycledPillow returnPillow = new CycledPillow(); //Indicates no pillow could be found
-		if (index != -1)
+		else
 		{
-			returnPillow = new CycledPillow(pillows[index], -closestModX, -closestModY); //We use minus because this is representing a modified PILLOW POSITION
-												      //However, previously we modified the PLAYER POSITION
-												      //So, It's really in the opposite direction
-		}
-		return returnPillow;
+			System.out.println("ERROR: This is not a bot");
+		}	
 	}
-
+	
+	//Returns the distance from the location
+	//This is basically copy-pasted from the Pillow class
+	public double getDist(double locx, double locy)
+	{
+		if (existence)
+		{
+			return Math.sqrt(Math.pow(locx - x + 50, 2) + Math.pow(locy - y + 50, 2));
+		}
+		else
+		{
+			System.out.println("This is not a bot");
+		}
+		return -1.0;
+	}
 }
 
-//A cycling bot
+//A cycling bot, used for distance detection
 class CycledBot
 {
 	Bot bot;
@@ -285,7 +360,7 @@ class CycledBot
 	private int mody;
 	private boolean existence;
 
-	public CycledBot(bot botIn, int modxIn, int modyIn)
+	public CycledBot(Bot botIn, int modxIn, int modyIn)
 	{
 		bot = botIn;
 		modx = modxIn;
@@ -303,7 +378,7 @@ class CycledBot
 	{
 		if (existence)
 		{
-			return bot.getX() + (modx * Pillow.MAX_X); //Cycle the bot appropriately
+			return (int)bot.getX() + (modx * Pillow.MAX_X); //Cycle the bot appropriately
 		}
 		else
 		{
@@ -316,7 +391,7 @@ class CycledBot
 	{
 		if (existence)
 		{
-			return bot.getY() + (mody * Pillow.MAX_Y); //Cycle it
+			return (int)bot.getY() + (mody * Pillow.MAX_Y); //Cycle it
 		}
 		else
 		{
@@ -331,7 +406,7 @@ class CycledBot
 	}
 
 	//If the bot needs to interact with the bot itself for some reason.
-	public Pillow getPillow()
+	public Bot getBot() throws NotABotException
 	{
 		if (existence)
 		{
@@ -339,24 +414,36 @@ class CycledBot
 		}
 		else
 		{
-			System.out.println("ERROR: Not a bot");
+			throw new NotABotException();
 		}
-		return new Bot();
 	}
 
 	//Returns the distance from the location
 	//This is basically copy-pasted from the Pillow class
 	public double getDist(double locx, double locy)
-	{5
-		if (existence)
+	{
+		try
 		{
-			return Math.sqrt(Math.pow(locx - getX() + 25, 2) + Math.pow(locy - getY() + 25, 2));
+			return Math.sqrt(Math.pow(locx - getX() + 50, 2) + Math.pow(locy - getY() + 50, 2));
 		}
-		else
+		catch (NotAPillowException err)
 		{
-			System.out.println("This is not a bot!"):
+			System.out.println("Error: NOT A PILLOW");
+			return -1.0;
 		}
-		return -1.0;
 	}
 }
 
+//It's not a bot: error
+class NotABotException extends Exception
+{
+	public NotABotException()
+	{
+		super("This is not really a bot");
+	}
+	
+	public NotABotException(String msg)
+	{
+		super(msg);
+	}
+}

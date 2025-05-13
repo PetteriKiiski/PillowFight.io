@@ -3,35 +3,62 @@ public class DumbBot extends Bot
 	private int directionX;
 	private int directionY;
 	private int timeCounter;
+	private boolean close;
 	
-	public DumbBot(PillowArray pA, int miss)
+	public DumbBot(PillowArray pA, BotArray bA, int miss)
 	{
-		super(pA, miss); //Just call super constructer
+		super(pA, bA, miss); //Just call super constructer
 		directionX = (int)(Math.random() * 3) - 1;
 		directionY = (int)(Math.random() * 3) - 1;
 		timeCounter = 0;
+		close = false;
 	}
 	
-	public void decide() throws NotAPillowException
+	public void decide() throws NotAPillowException, NotABotException
 	{
-		CycledPillow closest = pillows.getClosestTo((int)x, (int)y, num);
-		if (closest.exists() & !pickedUp.exists()) //Search and pick up a pillow
+		CycledPillow closestPillow = pillows.getClosestTo((int)x, (int)y, num);
+		CycledBot closestBot = bots.getClosestTo((int)x, (int)y, num, this);
+		
+		try
 		{
-			moveToward(closest.getX() - x, closest.getY() - y);
-			pickUp(closest);
+			if (closestBot.getBot().isPlayer)
+			{
+				System.out.println("CLOSE");
+				close = true;
+			}
+			else if (close)
+			{
+				System.out.println("BYE!");
+				close = false;
+			}
+		}
+		catch (NotABotException err)
+		{
+			System.out.println("HMMMMMMMMM");
+		}	
+		if (pickedUp.exists())
+		{	
+				throwPillow(closestBot.getX(), closestBot.getY());	
+		}
+	
+		//Move
+		
+		if (closestBot.getDist(x, y) <= 300 && closestBot.getBot().pickedUp.exists()) //Move away if they are holding a pillow
+		{
+			moveToward(x - closestBot.getX(), y - closestBot.getY()); //Actually, move away
+		}
+		else if (pickedUp.exists())
+		{
+			moveToward(closestBot.getX() - x, closestBot.getY() - y);
+		}	
+		else if (closestPillow.exists())//Search for pillow
+		{
+			moveToward(closestPillow.getX() - x, closestPillow.getY() - y);
+			pickUp(closestPillow);
 		}
 		else
 		{
-			changeX(directionX * AnimateListener.MOVE_SPEED * AnimateListener.DELAY / 1000);
-			changeY(directionY * AnimateListener.MOVE_SPEED * AnimateListener.DELAY / 1000);
-			timeCounter++;
-		}
-		
-		//Throw decision
-		if (pickedUp.exists() && timeCounter >= 3000 / AnimateListener.DELAY)
-		{
-			throwPillow(x - directionX, y - directionY);
-			timeCounter = 0;
+			System.out.println("SADNESS");
 		}
 	}
 }
