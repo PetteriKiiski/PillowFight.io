@@ -18,7 +18,7 @@ public class PillowArray
 		for (int i = 0; i < numPillows; i++)
 		{
 			//i % 10 ensures all digits exist in the "world"
-			pillows[i] = new Pillow(i % 10);
+			pillows[i] = new Pillow(i % 10, i);
 		}
 	}
 	
@@ -196,5 +196,10 @@ public class PillowArray
 	public boolean holdingPillow()
 	{
 		return pickedUp != -1; //Returns false if not holding pillow, true if it is.
+	}
+	
+	public Pillow getPillow(int index)
+	{
+		return pillows[index];
 	}
 }

@@ -19,13 +19,13 @@ public class Bot
 	protected int num;
 	
 	//Accuracy of the bot: this modifies the difficulty of the game
-	int miss;
+	protected int miss;
 	
 	//PillowArray: stores all the pillows
-	PillowArray pillows;
+	protected PillowArray pillows;
 
 	//BotArray: stores all the bots AND a kind of player bot
-	BotArray bots;
+	protected BotArray bots;
 
 	public Pillow pickedUp; //This is public: you can see it
 
@@ -35,6 +35,8 @@ public class Bot
 
 	//For reality checking
     protected boolean existence; //Does it exist?
+
+	protected int health;
 
 	public Bot() 
 	{
@@ -66,6 +68,9 @@ public class Bot
 		//For the player: this is default
 		isPlayer = false;
 		immune = false;
+		
+		//Health
+		health = 6; //Six half hearts
 	}
 	
 	//returns the player's immune state: does not apply to bots
@@ -168,8 +173,8 @@ public class Bot
 		{
 			moveY(amt);
 			if (pickedUp.exists())
-				{
-					pickedUp.moveToPicked(x, y);
+			{
+				pickedUp.moveToPicked(x, y);
 			}
 		}
 		else
@@ -253,10 +258,13 @@ public class Bot
 		{
 			System.out.println("ERROR: Not a bot");
 		}
-	}	
+	}
 
 	//Collide with bots and the player
-	public void collide() {} //This is gonna be nice. Collisions will decrease health
+	public void collide() //This is gonna be nice. Collisions will decrease health
+	{
+		health--;
+	}
 	
 	//Literally copy-pasted from Pillow.java
 	//With minor edits
@@ -265,20 +273,20 @@ public class Bot
 		if (existence)
 		{
 			//really simple
-			if (y >= Pillow.MAX_Y)
+			if (y > Pillow.MAX_Y)
 			{
-				y -= Pillow.MAX_Y + 50;
+				y -= Pillow.MAX_Y + 150;
 			}	
-			else if (y <= -50)
+			else if (y < -150)
 			{
 				y += Pillow.MAX_Y;
 			}
 
-			if (x >= Pillow.MAX_X)
+			if (x > Pillow.MAX_X)
 			{
-				x -= Pillow.MAX_X + 50;
+				x -= Pillow.MAX_X + 150;
 			}
-			else if (x <= -50)
+			else if (x < -150)
 			{
 				x += Pillow.MAX_X;
 			}
@@ -342,13 +350,24 @@ public class Bot
 	{
 		if (existence)
 		{
-			return Math.sqrt(Math.pow(locx - x + 50, 2) + Math.pow(locy - y + 50, 2));
+			return Math.sqrt(Math.pow(locx - x, 2) + Math.pow(locy - y, 2));
 		}
 		else
 		{
 			System.out.println("This is not a bot");
 		}
 		return -1.0;
+	}
+	
+	//Returns whether the bot was successfully destroyed
+	public boolean loseHealth(int amt) //Amount may be customizable in the future by different pillows
+	{
+		health -= amt;
+		if (health <= 0)
+		{
+			return true; //Successfully destroyed
+		}
+		return false;
 	}
 }
 
@@ -431,6 +450,12 @@ class CycledBot
 			System.out.println("Error: NOT A PILLOW");
 			return -1.0;
 		}
+	}
+	
+	//Check collisions
+	public void checkCollisions()
+	{
+		
 	}
 }
 

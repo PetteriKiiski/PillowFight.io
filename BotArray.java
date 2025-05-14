@@ -7,14 +7,17 @@ public class BotArray
 	private PillowArray pillows;
 	private PlayerBot player; //Represents the player
 
-	public BotArray(int numBots, PillowArray pillowsIn, int miss, PlayerBot playerIn)
+	//Number of bots
+	public static final int NUM_BOTS = 20;
+
+	public BotArray(PillowArray pillowsIn, int miss, PlayerBot playerIn)
 	{
 		pillows = pillowsIn;
-		bots = new Bot[numBots + 1]; //+1 because of the player
+		bots = new Bot[NUM_BOTS + 1]; //+1 because of the player
 		player = playerIn;
 		bots[0] = player;
 
-		for (int i = 1; i <= numBots; i++)
+		for (int i = 1; i <= NUM_BOTS; i++)
 		{
 			bots[i] = new DumbBot(pillows, this, miss); //I would make it a loop, but it's a bit too complicated for my liking.
 		}
@@ -65,6 +68,8 @@ public class BotArray
 				System.err.println("ERROR: There was an error deciding what the bot is to do");
 			}
 		}
+		//After movement, check for collisions
+		checkCollisions();
 	}
 	
 	//Helpful for the bot's implementation. Modified-copypasted from Pillow.java
@@ -83,10 +88,11 @@ public class BotArray
 		{
 			//The reason for all this xmod behavior is to manage the cyclical behavior
 			//Get the closest based on all these nine possible positions
-			/*
-			 * X \ X / X
+			/* X   X   X
+			 *   \ | / 
 			 * X - O - X
-			 * X / X \ X
+			 *   / | \ 
+			 * X   X   X
 			 * 
 			 * where O is the "actual" position.
 			 * Take the one that is closest to the position.
@@ -126,5 +132,60 @@ public class BotArray
 												      //So, It's really in the opposite direction
 		}
 		return returnBot;
+	}
+	
+	//Checks all the collisions
+	public void checkCollisions()
+	{
+		//This time, we include the player bot.
+		for (int i = 0; i < bots.length - 1; i++) //The last bot can only repeat checks, no need to check that
+		{
+			for (int j = i + 1; j < bots.length; j++) //We start at i + 1 to not repeat checks. Here we check the last bot.
+			{
+				if (bots[i].getDist(bots[j].getX(), bots[j].getY()) < 100)
+				{
+					bots[i].collide(); //Collide.
+					bots[j].collide();
+				}
+			}
+		}
+		
+		//With this method, no collision checks are repeated.
+		//Now, we check bot to pillow collisions
+		for (int i = 0; i < NUM_BOTS; i++)
+		{
+			for (int j = 0; j < 90; j++)
+			{
+				Pillow checkPillow = pillows.getPillow(j);
+				//These are no longer circles: simple distance checks no longer work
+				if (checkPillow.doesDamage()) //Make sure checks are even relevant
+				{
+					try
+					{
+						if (checkPillow.getX() + 50 > bots[i].getX() && checkPillow.getX() < bots[i].getX() + 100)
+						{
+							bots[i].loseHealth(1); //Only lose health: no need to actually properly collide as the pillow will just stop moving itself
+							checkPillow.hit();
+							System.out.printf("Pillow hit on X: (%d, %d)\n", checkPillow.getX(), checkPillow.getY());
+						}
+						else if (checkPillow.getY() + 50 > bots[i].getY() && checkPillow.getY() < bots[i].getY() + 100)
+						{
+							bots[i].loseHealth(1);
+							checkPillow.hit();
+							System.out.printf("Pillow hit on Y: (%d, %d)\n", checkPillow.getX(), checkPillow.getY());
+						}
+					}
+					catch (NotAPillowException err)
+					{
+						System.err.println("ERROR: Not a pillow");
+					}
+				}
+			}
+		}
+	}
+	
+	public Bot getBot(int index)
+	{
+		return bots[index];
 	}
 }

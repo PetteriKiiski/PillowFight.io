@@ -59,7 +59,7 @@ public class GamePanel extends JPanel
 		setFocusable(true);
 		PlayerBot player = new PlayerBot();
 		pillows = new PillowArray(90, player);
-		bots = new BotArray(20, pillows, (int)(Math.PI / 8), player); //miss represents the difficulty. In radians. Player represents the player
+		bots = new BotArray(pillows, (int)(Math.PI / 8), player); //miss represents the difficulty. In radians. Player represents the player
 		aL = new AnimateListener(this, pillows, bots);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener
@@ -133,7 +133,8 @@ public class GamePanel extends JPanel
 					{
 						pillows.throwPillow(evt.getX(), evt.getY());
 					}
-					else {
+					else
+					{
 						aL.pickUp();
 					}
 				}

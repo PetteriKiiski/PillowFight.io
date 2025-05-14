@@ -13,7 +13,7 @@ public class DumbBot extends Bot
 		timeCounter = 0;
 		close = false;
 	}
-	
+	/*
 	public void decide() throws NotAPillowException, NotABotException
 	{
 		CycledPillow closestPillow = pillows.getClosestTo((int)x, (int)y, num);
@@ -23,18 +23,16 @@ public class DumbBot extends Bot
 		{
 			if (closestBot.getBot().isPlayer)
 			{
-				System.out.println("CLOSE");
 				close = true;
 			}
 			else if (close)
 			{
-				System.out.println("BYE!");
 				close = false;
 			}
 		}
 		catch (NotABotException err)
 		{
-			System.out.println("HMMMMMMMMM");
+			System.out.println("ERROR: Not a Bot");
 		}	
 		if (pickedUp.exists())
 		{	
@@ -43,7 +41,7 @@ public class DumbBot extends Bot
 	
 		//Move
 		
-		if (closestBot.getDist(x, y) <= 300 && closestBot.getBot().pickedUp.exists()) //Move away if they are holding a pillow
+		if ((closestBot.getDist(x, y) <= 400 && closestBot.getBot().pickedUp.exists()) || closestBot.getDist(x, y) <= 300) //Move away if they are holding a pillow
 		{
 			moveToward(x - closestBot.getX(), y - closestBot.getY()); //Actually, move away
 		}
@@ -56,9 +54,7 @@ public class DumbBot extends Bot
 			moveToward(closestPillow.getX() - x, closestPillow.getY() - y);
 			pickUp(closestPillow);
 		}
-		else
-		{
-			System.out.println("SADNESS");
-		}
 	}
+	*/
+	public void decide() {}
 }

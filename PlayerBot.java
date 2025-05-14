@@ -4,12 +4,13 @@ public class PlayerBot extends Bot
 	public PlayerBot()
 	{
 		//The constant position
-		x = 450;
-		y = 350;
+		x = 500;
+		y = 400;
 		existence = true;
 		isPlayer = true;
 		immune = true;
 		pickedUp = new Pillow();
+		health = 6; //Six half hearts.
 	}
 	
 	public void setImmune(boolean value)

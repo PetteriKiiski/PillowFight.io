@@ -30,7 +30,10 @@ public class Pillow
 	public static final int MAX_Y = 2400;
 		
 	//The number on the pillow: will be the solution
-	int num;
+	private int num;
+	
+	//The index in the PillowArray
+	private int index;
 	
 	//Can be used to represent the lack of a real pillow
 	private boolean existence;
@@ -39,7 +42,7 @@ public class Pillow
 	private boolean picked;
 
 	//Constructor: takes in the number
-	public Pillow (int numIn)
+	public Pillow (int numIn, int indexIn)
 	{
 		//Set its picked state
 		picked = false;
@@ -58,6 +61,9 @@ public class Pillow
 		//The number on it
 		num = numIn;
 		
+		//Index
+		index = indexIn;
+		
 		//This pillow exists
 		existence = true;
 	}
@@ -68,6 +74,13 @@ public class Pillow
 		existence = false;	
 	}
 
+	//Do you really need me to explain this?
+	public int getIndex()
+	{
+		return index;
+	}
+
+	//Has it been picked up by something?
 	public boolean isPicked()
 	{
 		if (existence)
@@ -224,10 +237,14 @@ public class Pillow
 			xvel = to_x * PILLOW_SPEED / hypot;
 			yvel = to_y * PILLOW_SPEED / hypot;
 			throwing = true;
+			
+			//Move it, so that the pillow doesn't damage the thrower
+			x += xvel * 150 / PILLOW_SPEED; //Move by 150 instead of PILLOW_SPEED
+			y += yvel * 150 / PILLOW_SPEED;
 		}
 		else if(!existence)
 		{
-			System.err.println("ERROR: This is not a pillow ZZ");
+			System.err.println("ERROR: This is not a pillow");
 		}
 	}
 
@@ -265,6 +282,18 @@ public class Pillow
 		{
 			System.err.println("ERROR: This is not a pillow");
 		}
+	}
+
+	//Returns whether it is currently doing damage to whatever hits it.
+	public boolean doesDamage()
+	{
+		return throwing;
+	}
+
+	//Stop the pillow if it hit
+	public void hit()
+	{
+		throwing = false;
 	}
 
 	//Cycles the position
