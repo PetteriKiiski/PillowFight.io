@@ -18,6 +18,9 @@ public class Pillow
 
 	//Are we throwing it?
 	private boolean throwing;
+	
+	//Is the player throwing it(for score-keeping)?
+	private boolean playerThrown;
 
 	//The speed of the pillows
 	public static final int PILLOW_SPEED = 1000; //PX per second
@@ -26,8 +29,8 @@ public class Pillow
 	public static final double THROW_TIME = 0.4; //In seconds
 
 	//Generation Range Constants: no need for min, as it's cyclical
-	public static final int MAX_X = 3000;
-	public static final int MAX_Y = 2400;
+	public static final int MAX_X = 9000;
+	public static final int MAX_Y = 7200;
 		
 	//The number on the pillow: will be the solution
 	private int num;
@@ -66,6 +69,8 @@ public class Pillow
 		
 		//This pillow exists
 		existence = true;
+		
+		playerThrown = false;
 	}
 	
 	public Pillow()
@@ -274,6 +279,7 @@ public class Pillow
 				xvel = 0;
 				yvel = 0;
 				throwing = false;
+				playerThrown = false;
 			}
 			//And again, cycle
 			cycle();
@@ -294,6 +300,19 @@ public class Pillow
 	public void hit()
 	{
 		throwing = false;
+		playerThrown = false;
+	}
+
+	//Returns if it's player thrown
+	public boolean isPlayerThrown()
+	{
+		return playerThrown;
+	}
+	
+	//Make it playerThrown
+	public void makePlayerThrown()
+	{
+		playerThrown = true;
 	}
 
 	//Cycles the position

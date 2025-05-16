@@ -13,7 +13,7 @@ public class DumbBot extends Bot
 		timeCounter = 0;
 		close = false;
 	}
-	/*
+	
 	public void decide() throws NotAPillowException, NotABotException
 	{
 		CycledPillow closestPillow = pillows.getClosestTo((int)x, (int)y, num);
@@ -55,6 +55,4 @@ public class DumbBot extends Bot
 			pickUp(closestPillow);
 		}
 	}
-	*/
-	public void decide() {}
 }

@@ -1,4 +1,3 @@
-
 //Main game file
 
 import javax.swing.JFrame;
@@ -51,12 +50,14 @@ class GameHolder extends JPanel
 		HomePanel hp = new HomePanel(cards, this, gp);
 		InstructionsPanel ip = new InstructionsPanel();
 		FamePanel fp = new FamePanel();
+		LosePanel lp = new LosePanel();
 		
 		//Actually add all these panels
 		add("Home", hp);
 		add("Game", gp);
 		add("Instructions", ip);
 		add("Fame", fp);
+		add("Loss", lp);
 		
 		//For ease of null layout component placement
 		if (PRINT_POSITION)

@@ -25,6 +25,9 @@ public class GamePanel extends JPanel
 		
 	//Array of all the bots
 	BotArray bots;
+	
+	//The player
+	PlayerBot player;
 
 	//Immune until click
 	public boolean immune;
@@ -38,6 +41,9 @@ public class GamePanel extends JPanel
 	//To change panels
 	CardLayout cards;
 	JPanel mainPanel;
+	
+	//Score!!! Get this as high as possible
+	private int score;
 
 	public void setImmune(boolean immunity)
 	{
@@ -56,11 +62,15 @@ public class GamePanel extends JPanel
 		//You are immune until you are not
 		immune = true;
 		
+		//Score!
+		score = 0;
+		
+		//And everything else
 		setFocusable(true);
-		PlayerBot player = new PlayerBot();
-		pillows = new PillowArray(90, player);
-		bots = new BotArray(pillows, (int)(Math.PI / 8), player); //miss represents the difficulty. In radians. Player represents the player
-		aL = new AnimateListener(this, pillows, bots);
+		player = new PlayerBot();
+		pillows = new PillowArray(player);
+		bots = new BotArray(pillows, (int)(Math.PI / 8), player, this); //miss represents the difficulty. In radians. Player represents the player
+		aL = new AnimateListener(this, pillows, bots, cards, mainPanel);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener
 		
@@ -76,6 +86,11 @@ public class GamePanel extends JPanel
 		addMouseListener(new ThrowListener());
 	}
 	
+	//If you destroy a bot
+	public void destroyBot()
+	{
+		score += 1000; //Just an arbitrary number
+	}
 	
 	//Starts the bots, basically
 	public void start()
@@ -107,8 +122,36 @@ public class GamePanel extends JPanel
 		}
 		g.fillOval(450, 350, 100, 100);
 
+		//Draw the hearts
+		//First heart
+		setHeartColor(g, 2);
+		g.fillRect(790, 0, 70, 100);
+		//Second heart
+		setHeartColor(g, 4);
+		g.fillRect(860, 0, 70, 100);
+		//Third heart
+		setHeartColor(g, 6);
+		g.fillRect(930, 0, 70, 100);
+
 		//Then, over all this, paint the picked up pillow
 		pillows.showPickedUp(g);
+	}
+	
+	//Sets the color based on which heart: there's a health ofset, which represents the minimum health for the full heart color
+	public void setHeartColor(Graphics g, int ofset)
+	{
+		if (player.health >= ofset)
+		{
+			g.setColor(new Color(255, 50, 50));
+		}
+		else if (player.health >= ofset - 1)
+		{
+			g.setColor(new Color(0, 255, 0));
+		}
+		else
+		{
+			g.setColor(new Color(0, 0, 0));
+		}
 	}
 	
 	//Keeps focus in window: and also interact with pillows(throwing)
@@ -168,6 +211,7 @@ class ButtonListener implements ActionListener
 	
 	public void actionPerformed(ActionEvent evt)
 	{
+		gamePanel.immune = true;
 		cards.show(panel, "Home");
 	}
 }
@@ -184,6 +228,12 @@ class AnimateListener implements ActionListener
 	//The Drawing panel
 	GamePanel panel;
 	
+	//The cards
+	CardLayout cards;
+	
+	//The card panel
+	JPanel mainPanel;
+	
 	//Move values: will be changed by the KeyListener(KeyBoardListener)
 	private boolean left;
 	private boolean right;
@@ -199,15 +249,17 @@ class AnimateListener implements ActionListener
 	public static final int DELAY = 16; //in ms : this is the timer delay
 	
 	//Take in all the info we need. Which is a lot.
-	public AnimateListener(GamePanel panelIn, PillowArray pillowsIn, BotArray botsIn)
+	public AnimateListener(GamePanel panelIn, PillowArray pillowsIn, BotArray botsIn, CardLayout cardsIn, JPanel mainPanelIn)
 	{
 		pillows = pillowsIn;
 		bots = botsIn;
 		panel = panelIn;
+		mainPanel = mainPanelIn;
 		left = false;
 		right = false;
 		up = false;
 		down = false;
+		cards = cardsIn;
 	}
 	
 	//"while (true) {" loop
@@ -246,6 +298,11 @@ class AnimateListener implements ActionListener
 		pillows.movePillows(); //Move thrown pillows
 		
 		bots.decide(); //make them move ON THEIR OWN
+		if (panel.player.health <= 0)
+		{
+			panel.immune = true;
+			cards.show(mainPanel, "Loss");
+		}
 		
 		//Then, repaint
 		panel.repaint();

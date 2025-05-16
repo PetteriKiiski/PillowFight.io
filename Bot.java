@@ -63,7 +63,7 @@ public class Bot
 		miss = missIn; //The amount the bot misses by
 		
 		//The random number
-		num = (int)(Math.random() * 10); //The range is 0-9, not 0-10'
+		num = (int)(Math.random() * 10); //The range is 0-9, not 0-10
 		
 		//For the player: this is default
 		isPlayer = false;
@@ -71,6 +71,15 @@ public class Bot
 		
 		//Health
 		health = 6; //Six half hearts
+	}
+	
+	//Resets parts of the bot: when the bot dies
+	public void resetBot()
+	{
+		health = 6;
+		x = Math.random() * Pillow.MAX_X;
+		y = Math.random() * Pillow.MAX_Y;
+		num = (int)(Math.random() * 10);
 	}
 	
 	//returns the player's immune state: does not apply to bots
@@ -111,6 +120,12 @@ public class Bot
 			System.out.println("ERROR: this is not a bot");
 			return -1.0;
 		}
+	}
+	
+	//Returns the health in half-hearts
+	public int getHealth()
+	{
+		return health;
 	}
 	
 	//Exists?
@@ -263,7 +278,7 @@ public class Bot
 	//Collide with bots and the player
 	public void collide() //This is gonna be nice. Collisions will decrease health
 	{
-		health--;
+		loseHealth(1);
 	}
 	
 	//Literally copy-pasted from Pillow.java
@@ -359,15 +374,10 @@ public class Bot
 		return -1.0;
 	}
 	
-	//Returns whether the bot was successfully destroyed
-	public boolean loseHealth(int amt) //Amount may be customizable in the future by different pillows
+	//Removes health
+	public void loseHealth(int amt) //Amount may be customizable in the future by different pillows
 	{
 		health -= amt;
-		if (health <= 0)
-		{
-			return true; //Successfully destroyed
-		}
-		return false;
 	}
 }
 

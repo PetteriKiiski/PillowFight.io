@@ -6,12 +6,14 @@ public class BotArray
 	private Bot[] bots;
 	private PillowArray pillows;
 	private PlayerBot player; //Represents the player
+	private GamePanel gamePanel;
 
 	//Number of bots
 	public static final int NUM_BOTS = 20;
 
-	public BotArray(PillowArray pillowsIn, int miss, PlayerBot playerIn)
+	public BotArray(PillowArray pillowsIn, int miss, PlayerBot playerIn, GamePanel gamePanelIn)
 	{
+		gamePanel = gamePanelIn; //For the score change
 		pillows = pillowsIn;
 		bots = new Bot[NUM_BOTS + 1]; //+1 because of the player
 		player = playerIn;
@@ -140,13 +142,20 @@ public class BotArray
 		//This time, we include the player bot.
 		for (int i = 0; i < bots.length - 1; i++) //The last bot can only repeat checks, no need to check that
 		{
-			for (int j = i + 1; j < bots.length; j++) //We start at i + 1 to not repeat checks. Here we check the last bot.
+			if (!bots[i].isImmune())
 			{
-				if (bots[i].getDist(bots[j].getX(), bots[j].getY()) < 100)
+				for (int j = i + 1; j < bots.length; j++) //We start at i + 1 to not repeat checks. Here we check the last bot.
 				{
-					bots[i].collide(); //Collide.
-					bots[j].collide();
+					if (bots[i].getDist(bots[j].getX(), bots[j].getY()) < 100)
+					{
+						bots[i].collide(); //Collide.
+						bots[j].collide();
+					}
 				}
+			}
+			else
+			{
+				System.out.println("HMMM");
 			}
 		}
 		
@@ -154,30 +163,40 @@ public class BotArray
 		//Now, we check bot to pillow collisions
 		for (int i = 0; i < NUM_BOTS; i++)
 		{
-			for (int j = 0; j < 90; j++)
+			if (!bots[i].isImmune())
 			{
-				Pillow checkPillow = pillows.getPillow(j);
-				//These are no longer circles: simple distance checks no longer work
-				if (checkPillow.doesDamage()) //Make sure checks are even relevant
+				for (int j = 0; j < PillowArray.NUM_PILLOWS; j++)
 				{
-					try
+					Pillow checkPillow = pillows.getPillow(j);
+					//These are no longer circles: simple distance checks no longer work
+					if (checkPillow.doesDamage()) //Make sure checks are even relevant
 					{
-						if (checkPillow.getX() + 50 > bots[i].getX() && checkPillow.getX() < bots[i].getX() + 100)
+						try
 						{
-							bots[i].loseHealth(1); //Only lose health: no need to actually properly collide as the pillow will just stop moving itself
-							checkPillow.hit();
-							System.out.printf("Pillow hit on X: (%d, %d)\n", checkPillow.getX(), checkPillow.getY());
+							if ((checkPillow.getX() + 50 >= bots[i].getX() && checkPillow.getX() + 50 <= bots[i].getX() + 100)
+								|| (checkPillow.getX() <= bots[i].getX() + 100) && checkPillow.getX() >= bots[i].getX())
+							{
+								if ((checkPillow.getY() + 50 >= bots[i].getY() && checkPillow.getY() + 50 <= bots[i].getY() + 100)
+									|| (checkPillow.getY() <= bots[i].getY() + 100 && checkPillow.getY() >= bots[i].getY()))
+								{
+									System.out.printf("HIT AT: (%d, %d)\n", checkPillow.getX(), checkPillow.getY());
+									bots[i].loseHealth(1); //Only lose health: no need to actually properly collide as the pillow will just stop moving itself
+									if (checkPillow.isPlayerThrown() && bots[i].health <= 0)
+									{
+										gamePanel.destroyBot(); //Increase score
+									}
+									if (bots[i].health == 0 && i != 0) //Don't reset the player
+									{				
+										bots[i].resetBot(); //It gets reset
+									}
+									checkPillow.hit();
+								}
+							}
 						}
-						else if (checkPillow.getY() + 50 > bots[i].getY() && checkPillow.getY() < bots[i].getY() + 100)
+						catch (NotAPillowException err)
 						{
-							bots[i].loseHealth(1);
-							checkPillow.hit();
-							System.out.printf("Pillow hit on Y: (%d, %d)\n", checkPillow.getX(), checkPillow.getY());
+							System.err.println("ERROR: Not a pillow");
 						}
-					}
-					catch (NotAPillowException err)
-					{
-						System.err.println("ERROR: Not a pillow");
 					}
 				}
 			}
