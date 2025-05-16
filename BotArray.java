@@ -153,10 +153,6 @@ public class BotArray
 					}
 				}
 			}
-			else
-			{
-				System.out.println("HMMM");
-			}
 		}
 		
 		//With this method, no collision checks are repeated.
@@ -179,15 +175,18 @@ public class BotArray
 								if ((checkPillow.getY() + 50 >= bots[i].getY() && checkPillow.getY() + 50 <= bots[i].getY() + 100)
 									|| (checkPillow.getY() <= bots[i].getY() + 100 && checkPillow.getY() >= bots[i].getY()))
 								{
-									System.out.printf("HIT AT: (%d, %d)\n", checkPillow.getX(), checkPillow.getY());
 									bots[i].loseHealth(1); //Only lose health: no need to actually properly collide as the pillow will just stop moving itself
 									if (checkPillow.isPlayerThrown() && bots[i].health <= 0)
 									{
 										gamePanel.destroyBot(); //Increase score
 									}
-									if (bots[i].health == 0 && i != 0) //Don't reset the player
+									if (bots[i].health <= 0 && i != 0) //Don't reset the player
 									{				
 										bots[i].resetBot(); //It gets reset
+									}
+									if (checkPillow.isPlayerThrown())
+									{
+										System.out.println("You hit");
 									}
 									checkPillow.hit();
 								}

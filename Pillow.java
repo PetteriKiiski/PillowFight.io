@@ -293,7 +293,14 @@ public class Pillow
 	//Returns whether it is currently doing damage to whatever hits it.
 	public boolean doesDamage()
 	{
-		return throwing;
+		if (existence)
+		{
+			return throwing;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	//Stop the pillow if it hit
