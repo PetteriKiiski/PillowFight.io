@@ -14,6 +14,7 @@ import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.CardLayout;
 import java.io.File; //Images
+import javax.swing.JLabel;
 
 public class GamePanel extends JPanel
 {
@@ -34,6 +35,9 @@ public class GamePanel extends JPanel
 	
 	//Animation Listener
 	AnimateListener aL;
+
+	//Math problem Label
+	JLabel problemLabel;
 
 	//Buttons!
 	JButton homeButton;
@@ -69,6 +73,11 @@ public class GamePanel extends JPanel
 		score = 0;
 		losePanel = lossPanel;
 
+		//The math problem
+		problemLabel = new JLabel("", JLabel.CENTER);
+		problemLabel.setFont(new Font("Arial", Font.PLAIN, 50));
+		problemLabel.setBounds(205, 0, 580, 100);
+
 		//And everything else
 		setFocusable(true);
 		player = new PlayerBot();
@@ -86,8 +95,80 @@ public class GamePanel extends JPanel
 		//Add the button
 		add(homeButton);
 		
+		//Add the math problem
+		add(problemLabel);
+		
+		//Initialize the label
+		genLabel(player.getSolution());
+		
 		//And, finally the mouseListener
 		addMouseListener(new ThrowListener());
+	}
+	
+	//Generate the label
+	public void genLabel(int solution)
+	{
+		int type = (int)(Math.random() * 4); //0: addition, 1:subtraction, 2:multiplication, 3:division
+		if (solution == 0) //Don't try multiplication: unsolvable
+		{
+			type = (int)(Math.random() * 3);
+			if (type == 2)
+			{
+				type = 3; //Make it a 3: division
+			}
+		}
+		
+		int operation = (int)(Math.random() * 11); //The operation by which the number is modified
+		
+		switch (type)
+		{
+			case 0: //Addition
+				problemLabel.setText(String.format("x + %d = %d", operation, solution + operation));
+				break;
+			case 1: //Subtraction
+				problemLabel.setText(String.format("x - %d = %d", operation, solution - operation));
+				break;
+			case 2: //Multiplication
+				if (operation == 0) //Don't make it unsolvable
+				{
+					operation = (int)(Math.random() * 10) + 1;
+				}
+				problemLabel.setText(String.format("%dx = %d", operation, solution * operation));
+				break;
+			case 3:	//Division
+				if (solution != 0) //For our purposes, 0 has infinitely many factors, but for the algorithm this doesn't work.
+				{
+					int[] factors = getFactors(solution); //This is to get the possible operations. Painful
+					operation = factors[(int)(Math.random() * factors.length)];
+				}
+				problemLabel.setText(String.format("x ÷ %d = %d", operation, solution / operation)); //After this, it's easy though
+				break;
+		}
+	}
+	
+	public int[] getFactors(int number) //Gets the factors.
+	{
+		int[] factors = new int[number];
+		factors[0] = 1; //1 is ALWAYS a factor
+		
+		int nextIndex = 1; //The next index to put a factor in
+		for (int i = 2; i <= number; i++) //i is the FACTOR, not index.
+		{
+			if (number % i == 0)
+			{
+				factors[nextIndex] = i;
+				nextIndex++; //Update the index
+			}
+		}
+		
+		//To make a minimum array
+		int[] justFactors = new int[nextIndex];
+		for (int i = 0; i < nextIndex; i++)
+		{
+			justFactors[i] = factors[i];
+		}
+		
+		return justFactors; //Return the factors
 	}
 	
 	//If you destroy a bot
@@ -193,7 +274,19 @@ public class GamePanel extends JPanel
 					}
 					else
 					{
-						aL.pickUp();
+						if (aL.pickUp()) //It was a legal pick-up
+						{
+							if (pillows.holdingPillow()) //Only if we are actually holding a pillow now
+							{
+								player.generateSolution(); //Generate the solution
+								genLabel(player.getSolution());
+								score += 25; //Increase the score for a correct solution
+							}
+						}
+						else //You were wrong on the math
+						{
+							player.loseHealth(1);
+						}
 					}
 				}
 			}
@@ -349,10 +442,10 @@ class AnimateListener implements ActionListener
 		down = YoN;
 	}
 
-	//Picks up a pillow
-	public void pickUp()
+	//Picks up a pillow: only if it's legal
+	public boolean pickUp()
 	{
-		pillows.pickUp();
+		return pillows.pickUp();
 	}
 }
 

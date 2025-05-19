@@ -6,6 +6,11 @@ public class PlayerBot extends Bot
 		//The constant position
 		x = 500;
 		y = 400;
+		
+		//The random number
+		num = (int)(Math.random() * 10); //The range is 0-9, not 0-10
+		
+		//other
 		existence = true;
 		isPlayer = true;
 		immune = true;
@@ -21,5 +26,15 @@ public class PlayerBot extends Bot
 	public void setPicked(Pillow picked)
 	{
 		pickedUp = picked;
+	}
+	
+	public int getSolution()
+	{
+		return num;
+	}
+	
+	public void generateSolution()
+	{
+		num = (int)(Math.random() * 10);
 	}
 }

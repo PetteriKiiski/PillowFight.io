@@ -78,6 +78,12 @@ public class Pillow
 		//Indicates this is the lack of a pillow
 		existence = false;	
 	}
+	
+	//The solution to the math problem
+	public int getSolution()
+	{
+		return num;
+	}
 
 	//Do you really need me to explain this?
 	public int getIndex()

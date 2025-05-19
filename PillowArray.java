@@ -67,7 +67,7 @@ public class PillowArray
 
 	//Pick up the closest, reasonably close pillow
 	//This doesn't use get closest because getClosest is a bit more complicated than necessary
-	public void pickUp()
+	public boolean pickUp()
 	{
 		double closest = 200; //The maximum legal distance for picking up
 		int index = -1;
@@ -96,6 +96,10 @@ public class PillowArray
 		//If there is a close pillow, which is not being thrown
 		if (index != -1 && !pillows[index].beingThrown())
 		{
+			if (pillows[index].getSolution() != player.getSolution())
+			{
+				return false; //Nope, this won't cut it
+			}
 			//Drop the current pillow, if there is one: there shouldn't be though
 			if (pickedUp != -1)
 			{
@@ -109,6 +113,7 @@ public class PillowArray
 				player.setPicked(pillows[index]);
 			}
 		}
+		return true;
 	}
 
 	//Helpful for the bot's implementation, and the required number. This number simulates the math problem
