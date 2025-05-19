@@ -169,11 +169,12 @@ public class BotArray
 					{
 						try
 						{
-							if ((checkPillow.getX() + 50 >= bots[i].getX() && checkPillow.getX() + 50 <= bots[i].getX() + 100)
-								|| (checkPillow.getX() <= bots[i].getX() + 100) && checkPillow.getX() >= bots[i].getX())
+							//Note: bot coordinates are from the center. Pillow's aren't, as it's simpler when they are boxes.
+							if ((checkPillow.getX() + 50 >= bots[i].getX() - 50 && checkPillow.getX() + 50 <= bots[i].getX() + 50)
+								|| (checkPillow.getX() <= bots[i].getX() + 50) && checkPillow.getX() >= bots[i].getX() - 50)
 							{
-								if ((checkPillow.getY() + 50 >= bots[i].getY() && checkPillow.getY() + 50 <= bots[i].getY() + 100)
-									|| (checkPillow.getY() <= bots[i].getY() + 100 && checkPillow.getY() >= bots[i].getY()))
+								if ((checkPillow.getY() + 50 >= bots[i].getY() - 50 && checkPillow.getY() + 50 <= bots[i].getY() + 50)
+									|| (checkPillow.getY() <= bots[i].getY() + 50 && checkPillow.getY() >= bots[i].getY() - 50))
 								{
 									bots[i].loseHealth(1); //Only lose health: no need to actually properly collide as the pillow will just stop moving itself
 									if (checkPillow.isPlayerThrown() && bots[i].health <= 0)
@@ -182,7 +183,7 @@ public class BotArray
 									}
 									if (bots[i].health <= 0 && i != 0) //Don't reset the player
 									{				
-										bots[i].resetBot(); //It gets reset
+										bots[i].resetBot(); //It gets reset; it "respawns"
 									}
 									if (checkPillow.isPlayerThrown())
 									{

@@ -232,32 +232,31 @@ public class Bot
 		
 		
 		//Randomize the angle
-		//Currently disabled
-		//int randomX = (int)(Math.random() * 2 * miss) - miss;
-		//int randomY = (int)(Math.random() * 2 * miss) - miss;
+		int randomX = (int)(Math.random() * 2 * miss) - miss;
+		int randomY = (int)(Math.random() * 2 * miss) - miss;
 
 		//Use the math
-		//if (toX - x != 0) //No zero division!
-		//{
-		//	pickedUp.throwPillow(Math.cos(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomX), Math.sin(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomY));
-		pickedUp.throwPillow((int)(toX - x), (int)(toY - y));
-		//}
-		//else //The angle is pi/2 radians or 3pi/2 radians in this case, depending on the y
-		//{
-		//	if (toY - y > 0)
-		//	{
-		//		pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
-		//	}
-		//	else if (toY - y < 0)
-		//	{
-		//		pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
-		//	}
-		//	else //We want to stay still, choose a random direction
-		//	{
-		//		double randomAngle = Math.random() * 2 * Math.PI;
-		//		pickedUp.throwPillow(Math.cos(randomAngle), Math.sin(randomAngle));
-		//	}
-		//}
+		if (toX - x != 0) //No zero division!
+		{
+			pickedUp.throwPillow(Math.cos(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomX), Math.sin(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomY));
+			//pickedUp.throwPillow((int)(toX - x), (int)(toY - y));
+		}
+		else //The angle is pi/2 radians or 3pi/2 radians in this case, depending on the y
+		{
+			if (toY - y > 0)
+			{
+				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
+			}
+			else if (toY - y < 0)
+			{
+				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
+			}
+			else //We want to stay still, choose a random direction
+			{
+				double randomAngle = Math.random() * 2 * Math.PI;
+				pickedUp.throwPillow(Math.cos(randomAngle), Math.sin(randomAngle));
+			}
+		}
 		pickedUp = new Pillow(); //We are no longer holding a pillow
 	}
 

@@ -41,6 +41,9 @@ public class GamePanel extends JPanel
 	//To change panels
 	CardLayout cards;
 	JPanel mainPanel;
+
+	//The thing to update the score on
+	LosePanel losePanel;
 	
 	//Score!!! Get this as high as possible
 	private int score;
@@ -50,7 +53,7 @@ public class GamePanel extends JPanel
 		immune = immunity;
 	}
 
-	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn)
+	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel)
 	{
 		//Things that we need to change panels
 		cards = cardsIn;
@@ -64,13 +67,14 @@ public class GamePanel extends JPanel
 		
 		//Score!
 		score = 0;
-		
+		losePanel = lossPanel;
+
 		//And everything else
 		setFocusable(true);
 		player = new PlayerBot();
 		pillows = new PillowArray(player);
-		bots = new BotArray(pillows, (int)(Math.PI / 8), player, this); //miss represents the difficulty. In radians. Player represents the player
-		aL = new AnimateListener(this, pillows, bots, cards, mainPanel);
+		bots = new BotArray(pillows, (int)(Math.PI / 4), player, this); //miss represents the difficulty. In radians. Player represents the player
+		aL = new AnimateListener(this, pillows, bots, cards, mainPanel, losePanel);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener
 		
@@ -90,6 +94,12 @@ public class GamePanel extends JPanel
 	public void destroyBot()
 	{
 		score += 1000; //Just an arbitrary number
+	}
+
+	//Get the score
+	public int getScore()
+	{
+		return score;
 	}
 	
 	//Starts the bots, basically
@@ -132,6 +142,11 @@ public class GamePanel extends JPanel
 		//Third heart
 		setHeartColor(g, 6);
 		g.fillRect(930, 0, 70, 100);
+
+		//Show to score
+		g.setColor(new Color(0, 0, 0));
+		g.setFont(new Font("Arial", Font.PLAIN, 30));
+		g.drawString(String.format("Score: %d", score), 790, 150);
 
 		//Then, over all this, paint the picked up pillow
 		pillows.showPickedUp(g);
@@ -233,6 +248,9 @@ class AnimateListener implements ActionListener
 	
 	//The card panel
 	JPanel mainPanel;
+
+	//The lose panel
+	LosePanel losePanel;
 	
 	//Move values: will be changed by the KeyListener(KeyBoardListener)
 	private boolean left;
@@ -247,9 +265,9 @@ class AnimateListener implements ActionListener
 	 * and can customize the general speed of the player
 	*/
 	public static final int DELAY = 16; //in ms : this is the timer delay
-	
+
 	//Take in all the info we need. Which is a lot.
-	public AnimateListener(GamePanel panelIn, PillowArray pillowsIn, BotArray botsIn, CardLayout cardsIn, JPanel mainPanelIn)
+	public AnimateListener(GamePanel panelIn, PillowArray pillowsIn, BotArray botsIn, CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel)
 	{
 		pillows = pillowsIn;
 		bots = botsIn;
@@ -260,6 +278,7 @@ class AnimateListener implements ActionListener
 		up = false;
 		down = false;
 		cards = cardsIn;
+		losePanel = lossPanel;
 	}
 	
 	//"while (true) {" loop
@@ -301,6 +320,7 @@ class AnimateListener implements ActionListener
 		if (panel.player.health <= 0)
 		{
 			panel.immune = true;
+			losePanel.setScore(panel.getScore());
 			cards.show(mainPanel, "Loss");
 		}
 		

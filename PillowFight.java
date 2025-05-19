@@ -46,11 +46,11 @@ class GameHolder extends JPanel
 		setLayout(cards);
 		
 		//Create and add all our panels
-		GamePanel gp = new GamePanel(cards, this);
+		LosePanel lp = new LosePanel();
+		GamePanel gp = new GamePanel(cards, this, lp);
 		HomePanel hp = new HomePanel(cards, this, gp);
 		InstructionsPanel ip = new InstructionsPanel();
 		FamePanel fp = new FamePanel();
-		LosePanel lp = new LosePanel();
 		
 		//Actually add all these panels
 		add("Home", hp);
