@@ -139,8 +139,23 @@ public class GamePanel extends JPanel
 				if (solution != 0) //For our purposes, 0 has infinitely many factors, but for the algorithm this doesn't work.
 				{
 					int[] factors = getFactors(solution); //This is to get the possible operations. Painful
+					System.out.print("{");
+					for (int i = 0; i < factors.length; i++)
+					{
+						System.out.print(factors[i]);
+						if (i != factors.length - 1)
+						{
+							System.out.print(", ");
+						}
+					}
+					System.out.println("}");
 					operation = factors[(int)(Math.random() * factors.length)];
 				}
+				else
+				{
+					operation = (int)(Math.random() * 9) + 1;
+				}
+
 				problemLabel.setText(String.format("x ÷ %d = %d", operation, solution / operation)); //After this, it's easy though
 				break;
 		}
