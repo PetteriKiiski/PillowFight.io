@@ -250,6 +250,12 @@ public class GamePanel extends JPanel
 		}
 	}
 	
+	//Heal!
+	public void heal(int amt)
+	{
+		player.loseHealth(-amt); //I mean, it's the same thing, right.
+	}
+	
 	//Keeps focus in window: and also interact with pillows(throwing)
 	class ThrowListener implements MouseListener
 	{
@@ -287,6 +293,14 @@ public class GamePanel extends JPanel
 						{
 							player.loseHealth(1);
 						}
+					}
+				}
+				else if (button == MouseEvent.BUTTON3) //Heal
+				{
+					if (pillows.holdingPillow())
+					{
+						heal(pillows.getHeal()); //Gets the heal from the specific pillow
+						pillows.drop();
 					}
 				}
 			}

@@ -202,6 +202,23 @@ public class PillowArray
 		player.setPicked(new Pillow()); //Set it to empty
 	}
 
+	//After healing
+	public void drop()
+	{
+		pillows[pickedUp].drop();
+		pickedUp = -1;
+	}
+	
+	//The heal
+	public int getHeal()
+	{
+		if (pickedUp != 1)
+		{
+			return pillows[pickedUp].getHeal();
+		}
+		return 0;
+	}
+
 	public boolean holdingPillow()
 	{
 		return pickedUp != -1; //Returns false if not holding pillow, true if it is.

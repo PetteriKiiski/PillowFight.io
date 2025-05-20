@@ -44,6 +44,12 @@ public class Pillow
 	//Is the pillow picked up?
 	private boolean picked;
 
+	//The properties
+	private double speedFactor; //% of speed
+	private int damage; //self-explanatory
+	private int heal; //how much it heals
+	private Color color; //The color indicator: will be replaced with image
+
 	//Constructor: takes in the number
 	public Pillow (int numIn, int indexIn)
 	{
@@ -67,10 +73,48 @@ public class Pillow
 		//Index
 		index = indexIn;
 		
+		//Set the pillows properties
+		generateProperties();
+		
 		//This pillow exists
 		existence = true;
 		
 		playerThrown = false;
+	}
+	
+	//These are all the possibilities for generation
+	public void generateProperties()
+	{
+		int type = (int)(Math.random() * 4);
+		switch (type)
+		{
+			case 0: //Light
+				heal = 0;
+				speedFactor = 2; //Really fast
+				damage = 1; //But kinda weak. However, it's hard to miss.
+				color = new Color(255, 255, 125); //Very bright yellow
+				break;
+			case 1: //Normal
+				heal = 0;
+				speedFactor = 1; //Normal
+				damage = 2;
+				color = new Color(255, 255, 0);
+				break;
+			case 2: //Heavy
+				heal = 0;
+				speedFactor = 0.7; //Slow
+				damage = 4; //But REALLY harmful. However, this usually won't happen unless you're (its) really stuck
+				color = new Color(100, 100, 100);
+				break;
+			case 3: //Heal
+				heal = 1; //Good for heal (not amazing)
+				speedFactor = 0.5; //bad for everything else
+				damage = 1;
+				color = new Color(255, 200, 200); //Pink!
+				break;
+			default:
+				System.out.println("ERROR: could not give a pillow type");
+		}
 	}
 	
 	public Pillow()
@@ -115,7 +159,7 @@ public class Pillow
 		if (existence)
 		{
 			//Simply draws a square, which represents the pillow
-			g.setColor(new Color(255, 255, 0));
+			g.setColor(color);
 			g.fillRect((int)x, (int)y, 50, 50);
 			
 			//Draw the number on the pillow
@@ -245,13 +289,13 @@ public class Pillow
 		{
 			picked = false;
 			double hypot = Math.sqrt(Math.pow(to_x, 2) + Math.pow(to_y, 2));
-			xvel = to_x * PILLOW_SPEED / hypot;
-			yvel = to_y * PILLOW_SPEED / hypot;
+			xvel = to_x * PILLOW_SPEED * speedFactor / hypot;
+			yvel = to_y * PILLOW_SPEED * speedFactor / hypot;
 			throwing = true;
 			
 			//Move it, so that the pillow doesn't damage the thrower
-			x += xvel * 150 / PILLOW_SPEED; //Move by 150 instead of PILLOW_SPEED
-			y += yvel * 150 / PILLOW_SPEED;
+			x += xvel * 150 / (PILLOW_SPEED * speedFactor); //Move by 150 instead of PILLOW_SPEED * speedFactor
+			y += yvel * 150 / (PILLOW_SPEED * speedFactor);
 		}
 		else if(!existence)
 		{
@@ -310,10 +354,17 @@ public class Pillow
 	}
 
 	//Stop the pillow if it hit
-	public void hit()
+	public int hit()
 	{
 		throwing = false;
 		playerThrown = false;
+		return damage;
+	}
+	
+	//Healing!
+	public int getHeal()
+	{
+		return heal;
 	}
 
 	//Returns if it's player thrown

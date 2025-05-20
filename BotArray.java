@@ -176,7 +176,6 @@ public class BotArray
 								if ((checkPillow.getY() + 50 >= bots[i].getY() - 50 && checkPillow.getY() + 50 <= bots[i].getY() + 50)
 									|| (checkPillow.getY() <= bots[i].getY() + 50 && checkPillow.getY() >= bots[i].getY() - 50))
 								{
-									bots[i].loseHealth(1); //Only lose health: no need to actually properly collide as the pillow will just stop moving itself
 									if (checkPillow.isPlayerThrown() && bots[i].health <= 0)
 									{
 										gamePanel.destroyBot(); //Increase score
@@ -189,7 +188,9 @@ public class BotArray
 									{
 										System.out.println("You hit");
 									}
-									checkPillow.hit();
+									
+									//Note: checkPillow.hit() returns the amount of damage
+									bots[i].loseHealth(checkPillow.hit()); //Only lose health: no need to actually properly collide as the pillow will just stop moving itself
 								}
 							}
 						}
