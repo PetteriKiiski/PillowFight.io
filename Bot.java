@@ -19,7 +19,7 @@ public class Bot
 	protected int num;
 	
 	//Accuracy of the bot: this modifies the difficulty of the game
-	protected int miss;
+	protected double miss;
 	
 	//PillowArray: stores all the pillows
 	protected PillowArray pillows;
@@ -43,7 +43,7 @@ public class Bot
 		existence = false;
 	}
 
-	public Bot(PillowArray pA, BotArray bA, int missIn) {
+	public Bot(PillowArray pA, BotArray bA, double missIn) {
 		//PillowArray
 		pillows = pA;
 		
@@ -218,38 +218,36 @@ public class Bot
 	//Throw the pillow. This is quite simple actually, since it was already implemented
 	public void throwPillow(double toX, double toY)
 	{
-		//Randomness in accuracy of throw: this is in DEGREES
+		//Randomness in accuracy of throw: this is in RADIANS
 		//Some trig needed in this!
 		//Here's the math
-		//angle = arctan(toY/toX)
+		//angle = arctan(toY/toX) to get the angle
 		//then, add the random degree to this angle
 		//arctan(toY/toX) + randomness
-		//then, convert them both back, using cos or sin
+		//then, convert them both back to x or y values, using cos or sin, respectively
 		//X = cos(arctan(toY / toX) + randomness)
 		//Y = sin(arctan(toY / toX) + randomness)
 		//
 		// By this, we randomly change the angle!
 		
 		
-		//Randomize the angle
-		int randomX = (int)(Math.random() * 2 * miss) - miss;
-		int randomY = (int)(Math.random() * 2 * miss) - miss;
+		//Randomize the angle: random ANGLE
+		double randomA = (Math.random() * 2 * miss) - miss; // - miss to make negative values possible: missable in both directions
 
 		//Use the math
 		if (toX - x != 0) //No zero division!
 		{
-			pickedUp.throwPillow(Math.cos(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomX), Math.sin(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomY));
-			//pickedUp.throwPillow((int)(toX - x), (int)(toY - y));
+			pickedUp.throwPillow(Math.cos(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomA), Math.sin(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomA));
 		}
 		else //The angle is pi/2 radians or 3pi/2 radians in this case, depending on the y
 		{
 			if (toY - y > 0)
 			{
-				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
+				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomA), Math.sin(Math.PI / 2 + randomA));
 			}
 			else if (toY - y < 0)
 			{
-				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomX), Math.sin(Math.PI / 2 + randomY));
+				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomA), Math.sin(Math.PI / 2 + randomA));
 			}
 			else //We want to stay still, choose a random direction
 			{

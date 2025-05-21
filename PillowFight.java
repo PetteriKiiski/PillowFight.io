@@ -25,7 +25,7 @@ public class PillowFight
 		frame.setSize(1000, 800);
 		frame.setLocation(200, 30);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(false);
+		frame.setResizable(true);
 		GameHolder holder = new GameHolder();
 		frame.getContentPane().add(holder);
 		frame.setVisible(true);
@@ -47,7 +47,7 @@ class GameHolder extends JPanel
 		setLayout(cards);
 		
 		//Create and add all our panels
-		LearnPanel learnPanel = new LearnPanel();
+		LearnPanel learnPanel = new LearnPanel(cards, this);
 		LosePanel lp = new LosePanel();
 		GamePanel gp = new GamePanel(cards, this, lp, learnPanel);
 		HomePanel hp = new HomePanel(cards, this, gp);

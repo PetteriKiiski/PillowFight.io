@@ -93,7 +93,7 @@ public class GamePanel extends JPanel
 		setFocusable(true);
 		player = new PlayerBot();
 		pillows = new PillowArray(player, this);
-		bots = new BotArray(pillows, (int)(Math.PI / 4), player, this); //miss represents the difficulty. In radians. Player represents the player
+		bots = new BotArray(pillows, Math.PI / 4, player, this); //miss represents the difficulty. In radians. Player represents the player
 		aL = new AnimateListener(this, pillows, bots, cards, mainPanel, losePanel, learnPanel);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener

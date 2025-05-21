@@ -170,7 +170,7 @@ public class Pillow
 			
 			//Draw the number on the pillow
 			g.setColor(new Color(0, 0, 0));
-			g.setFont(new Font("Arial", Font.PLAIN, 25));
+			g.setFont(new Font("Arial", Font.PLAIN, 35));
 			g.drawString(Integer.toString(num), (int)x+15, (int)y+38);
 		}
 		else

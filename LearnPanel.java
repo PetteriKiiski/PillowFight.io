@@ -6,6 +6,7 @@ import javax.swing.Timer;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.CardLayout;
 
 public class LearnPanel extends JPanel
 {
@@ -13,11 +14,11 @@ public class LearnPanel extends JPanel
 	private JLabel secondLabel;
 	private JButton loseButton;
 	private Timer timer;
-	
-	public LearnPanel()
+
+	public LearnPanel(CardLayout cards, GameHolder panel)
 	{	
 		setLayout(null);
-		
+
 		//The two labels
 		firstLabel = new JLabel();
 		firstLabel.setBounds(10, 0, 990, 100);
@@ -28,6 +29,9 @@ public class LearnPanel extends JPanel
 		//The button
 		loseButton = new JButton("See your score");
 		loseButton.setBounds(400, 350, 200, 100);
+		loseButton.addActionListener(new LearnButtonListener(cards, panel));
+
+		//The button's timer: only show after 5 seconds
 		timer = new Timer(5000, new LearnListener());
 		
 		//Add them
@@ -86,6 +90,24 @@ public class LearnPanel extends JPanel
 		public void actionPerformed(ActionEvent evt)
 		{	
 				haveButton();
+		}
+	}
+
+	class LearnButtonListener implements ActionListener
+	{
+		//For switching panels
+		private CardLayout cards;
+		private GameHolder panel;
+
+		public LearnButtonListener(CardLayout cardsIn, GameHolder holder)
+		{
+			cards = cardsIn;
+			panel = holder;
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			cards.show(panel, "Loss");
 		}
 	}
 }

@@ -11,7 +11,7 @@ public class BotArray
 	//Number of bots
 	public static final int NUM_BOTS = 20;
 
-	public BotArray(PillowArray pillowsIn, int miss, PlayerBot playerIn, GamePanel gamePanelIn)
+	public BotArray(PillowArray pillowsIn, double miss, PlayerBot playerIn, GamePanel gamePanelIn)
 	{
 		gamePanel = gamePanelIn; //For the score change
 		pillows = pillowsIn;
