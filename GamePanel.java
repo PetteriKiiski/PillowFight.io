@@ -13,41 +13,49 @@ import java.awt.event.MouseEvent;
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.CardLayout;
-import java.io.File; //Images
 import javax.swing.JLabel;
+import java.awt.Image;
 
 public class GamePanel extends JPanel
 {
 	//Our timer
-	Timer timer;
+	private Timer timer;
 	
 	//Array of all the pillows
-	PillowArray pillows;
+	private PillowArray pillows;
 		
 	//Array of all the bots
-	BotArray bots;
+	private BotArray bots;
 	
 	//The player
-	PlayerBot player;
+	private PlayerBot player;
 
 	//Immune until click
 	public boolean immune;
 	
 	//Animation Listener
-	AnimateListener aL;
+	private AnimateListener aL;
 
 	//Math problem Label
-	JLabel problemLabel;
+	private JLabel problemLabel;
 
 	//Buttons!
-	JButton homeButton;
+	private JButton homeButton;
 
 	//To change panels
-	CardLayout cards;
-	JPanel mainPanel;
+	private CardLayout cards;
+	private JPanel mainPanel;
 
 	//The thing to update the score on
-	LosePanel losePanel;
+	private LosePanel losePanel;
+	
+	//Problem generation values: to teach the player
+	private int solution;
+	private int operation;
+	private int type;
+	
+	//Learn...
+	private boolean learn;
 	
 	//Score!!! Get this as high as possible
 	private int score;
@@ -57,7 +65,7 @@ public class GamePanel extends JPanel
 		immune = immunity;
 	}
 
-	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel)
+	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel, LearnPanel learnPanel)
 	{
 		//Things that we need to change panels
 		cards = cardsIn;
@@ -78,12 +86,15 @@ public class GamePanel extends JPanel
 		problemLabel.setFont(new Font("Arial", Font.PLAIN, 50));
 		problemLabel.setBounds(205, 0, 580, 100);
 
+		//Get the problem wrong? Learn... you will.
+		learn = false;
+
 		//And everything else
 		setFocusable(true);
 		player = new PlayerBot();
-		pillows = new PillowArray(player);
+		pillows = new PillowArray(player, this);
 		bots = new BotArray(pillows, (int)(Math.PI / 4), player, this); //miss represents the difficulty. In radians. Player represents the player
-		aL = new AnimateListener(this, pillows, bots, cards, mainPanel, losePanel);
+		aL = new AnimateListener(this, pillows, bots, cards, mainPanel, losePanel, learnPanel);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener
 		
@@ -105,10 +116,16 @@ public class GamePanel extends JPanel
 		addMouseListener(new ThrowListener());
 	}
 	
-	//Generate the label
-	public void genLabel(int solution)
+	public PlayerBot getPlayer()
 	{
-		int type = (int)(Math.random() * 4); //0: addition, 1:subtraction, 2:multiplication, 3:division
+		return player;
+	}
+	
+	//Generate the label
+	public void genLabel(int solutionIn)
+	{
+		solution = solutionIn;
+		type = (int)(Math.random() * 4); //0: addition, 1:subtraction, 2:multiplication, 3:division
 		if (solution == 0) //Don't try multiplication: unsolvable
 		{
 			type = (int)(Math.random() * 3);
@@ -118,7 +135,7 @@ public class GamePanel extends JPanel
 			}
 		}
 		
-		int operation = (int)(Math.random() * 11); //The operation by which the number is modified
+		operation = (int)(Math.random() * 11); //The operation by which the number is modified
 		
 		switch (type)
 		{
@@ -139,16 +156,6 @@ public class GamePanel extends JPanel
 				if (solution != 0) //For our purposes, 0 has infinitely many factors, but for the algorithm this doesn't work.
 				{
 					int[] factors = getFactors(solution); //This is to get the possible operations. Painful
-					System.out.print("{");
-					for (int i = 0; i < factors.length; i++)
-					{
-						System.out.print(factors[i]);
-						if (i != factors.length - 1)
-						{
-							System.out.print(", ");
-						}
-					}
-					System.out.println("}");
 					operation = factors[(int)(Math.random() * factors.length)];
 				}
 				else
@@ -159,6 +166,22 @@ public class GamePanel extends JPanel
 				problemLabel.setText(String.format("x ÷ %d = %d", operation, solution / operation)); //After this, it's easy though
 				break;
 		}
+	}
+	
+	//Get the math problem properties
+	public int getSolution()
+	{
+		return solution;
+	}
+	
+	public int getType()
+	{
+		return type;
+	}
+	
+	public int getOperation()
+	{
+		return operation;
 	}
 	
 	public int[] getFactors(int number) //Gets the factors.
@@ -214,7 +237,6 @@ public class GamePanel extends JPanel
 		pillows.paintPillows(g);
 		bots.paintBots(g); //And the bots!
 		
-		//Paint the player. Who definitely moves... totally
 		if (immune)
 		{
 			g.setColor(new Color(0, 0, 0));
@@ -226,18 +248,18 @@ public class GamePanel extends JPanel
 		{
 			g.setColor(new Color(255, 0, 255));
 		}
+		//Paint the player. Who definitely moves... totally
 		g.fillOval(450, 350, 100, 100);
+		g.setColor(new Color(0, 0, 0));
+		g.drawOval(450, 350, 100, 100);
 
 		//Draw the hearts
 		//First heart
-		setHeartColor(g, 2);
-		g.fillRect(790, 0, 70, 100);
+		g.drawImage(getHeartImage(2), 790, 0, this);
 		//Second heart
-		setHeartColor(g, 4);
-		g.fillRect(860, 0, 70, 100);
+		g.drawImage(getHeartImage(4), 860, 0, this);
 		//Third heart
-		setHeartColor(g, 6);
-		g.fillRect(930, 0, 70, 100);
+		g.drawImage(getHeartImage(6), 930, 0, this);
 
 		//Show to score
 		g.setColor(new Color(0, 0, 0));
@@ -249,26 +271,35 @@ public class GamePanel extends JPanel
 	}
 	
 	//Sets the color based on which heart: there's a health ofset, which represents the minimum health for the full heart color
-	public void setHeartColor(Graphics g, int ofset)
+	public Image getHeartImage(int offset)
 	{
-		if (player.health >= ofset)
+		if (player.health >= offset)
 		{
-			g.setColor(new Color(255, 50, 50));
+			return LoadedImages.fullHeart;
 		}
-		else if (player.health >= ofset - 1)
+		else if (player.health >= offset - 1)
 		{
-			g.setColor(new Color(0, 255, 0));
+			return LoadedImages.halfHeart;
 		}
 		else
 		{
-			g.setColor(new Color(0, 0, 0));
+			return LoadedImages.emptyHeart;
 		}
 	}
 	
 	//Heal!
 	public void heal(int amt)
 	{
-		player.loseHealth(-amt); //I mean, it's the same thing, right.
+		if (player.health < 6) //Don't go above max
+		{
+			player.loseHealth(-amt); //I mean, it's the same thing, right.
+		}
+	}
+	
+	//Should we learn?
+	public boolean getLearn()
+	{
+		return learn;
 	}
 	
 	//Keeps focus in window: and also interact with pillows(throwing)
@@ -302,11 +333,13 @@ public class GamePanel extends JPanel
 								player.generateSolution(); //Generate the solution
 								genLabel(player.getSolution());
 								score += 25; //Increase the score for a correct solution
+								learn = false; //You know how to solve it
 							}
 						}
 						else //You were wrong on the math
 						{
 							player.loseHealth(1);
+							learn = true; //You got something wrong!
 						}
 					}
 				}
@@ -374,6 +407,9 @@ class AnimateListener implements ActionListener
 	//The lose panel
 	LosePanel losePanel;
 	
+	//The learning panel
+	LearnPanel learnPanel;
+	
 	//Move values: will be changed by the KeyListener(KeyBoardListener)
 	private boolean left;
 	private boolean right;
@@ -389,7 +425,7 @@ class AnimateListener implements ActionListener
 	public static final int DELAY = 16; //in ms : this is the timer delay
 
 	//Take in all the info we need. Which is a lot.
-	public AnimateListener(GamePanel panelIn, PillowArray pillowsIn, BotArray botsIn, CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel)
+	public AnimateListener(GamePanel panelIn, PillowArray pillowsIn, BotArray botsIn, CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel, LearnPanel learnPanelIn)
 	{
 		pillows = pillowsIn;
 		bots = botsIn;
@@ -401,6 +437,7 @@ class AnimateListener implements ActionListener
 		down = false;
 		cards = cardsIn;
 		losePanel = lossPanel;
+		learnPanel = learnPanelIn;
 	}
 	
 	//"while (true) {" loop
@@ -439,11 +476,19 @@ class AnimateListener implements ActionListener
 		pillows.movePillows(); //Move thrown pillows
 		
 		bots.decide(); //make them move ON THEIR OWN
-		if (panel.player.health <= 0)
+		if (panel.getPlayer().health <= 0)
 		{
-			panel.immune = true;
 			losePanel.setScore(panel.getScore());
-			cards.show(mainPanel, "Loss");
+			if (panel.getLearn() && !panel.immune) //Don't show this panel over and over again, but keep the timer running
+			{
+				learnPanel.setProblem(panel.getSolution(), panel.getType(), panel.getOperation()); //Inform the problem to teach
+				cards.show(mainPanel, "Learn"); //YOU WILL LEARN
+			}
+			else if (!panel.immune)
+			{
+				cards.show(mainPanel, "Loss");
+			}
+			panel.immune = true;
 		}
 		
 		//Then, repaint

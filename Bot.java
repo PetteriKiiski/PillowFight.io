@@ -267,6 +267,8 @@ public class Bot
 		{
 			g.setColor(new Color(255, 0, 0));
 			g.fillOval((int)x - 50, (int)y - 50, 100, 100); //You are at the center of the bot...
+			g.setColor(new Color(0, 0, 0));
+			g.drawOval((int)x - 50, (int)y - 50, 100, 100);
 		}
 		else
 		{

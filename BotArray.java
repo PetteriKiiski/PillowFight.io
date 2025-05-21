@@ -184,10 +184,6 @@ public class BotArray
 									{				
 										bots[i].resetBot(); //It gets reset; it "respawns"
 									}
-									if (checkPillow.isPlayerThrown())
-									{
-										System.out.println("You hit");
-									}
 									
 									//Note: checkPillow.hit() returns the amount of damage
 									bots[i].loseHealth(checkPillow.hit()); //Only lose health: no need to actually properly collide as the pillow will just stop moving itself

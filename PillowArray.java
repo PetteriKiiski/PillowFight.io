@@ -13,7 +13,7 @@ public class PillowArray
 	public static final int NUM_PILLOWS = 810;
 
 	//Create a customizable pillow number
-	public PillowArray(PlayerBot playerIn)
+	public PillowArray(PlayerBot playerIn, GamePanel gamePanel)
 	{
 		pillows = new Pillow[NUM_PILLOWS];
 		player = playerIn;
@@ -21,7 +21,7 @@ public class PillowArray
 		for (int i = 0; i < NUM_PILLOWS; i++)
 		{
 			//i % 10 ensures all digits exist in the "world"
-			pillows[i] = new Pillow(i % 10, i);
+			pillows[i] = new Pillow(i % 10, i, gamePanel);
 		}
 	}
 	
@@ -117,7 +117,7 @@ public class PillowArray
 	}
 
 	//Helpful for the bot's implementation, and the required number. This number simulates the math problem
-	public CycledPillow getClosestTo(int at_x, int at_y, int num)
+	public CycledPillow getClosestTo(int at_x, int at_y, int num) //num == -1 means get the actual closest
 	{
 		double closest = -1; //The distance of the closest(so far)
 		int index = -1; //The closest's index
@@ -141,7 +141,7 @@ public class PillowArray
 			 * Take the one that is closest to the position.
 			 * This will be the true distance.
 			 */
-			if (i != -1 && i != pickedUp && !pillows[i].isPicked() && pillows[i].numberIs(num)) //Don't see the pickedUp pillows the same way as the others.
+			if (i != -1 && i != pickedUp && !pillows[i].isPicked() && (num == -1 || pillows[i].numberIs(num))) //Don't see the pickedUp pillows the same way as the others.
 			{
 				for (int xmod = -1; xmod <= 1; xmod++)
 				{

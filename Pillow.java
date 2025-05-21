@@ -2,6 +2,7 @@
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 
 //Contains all the pillows
 public class Pillow
@@ -48,10 +49,13 @@ public class Pillow
 	private double speedFactor; //% of speed
 	private int damage; //self-explanatory
 	private int heal; //how much it heals
-	private Color color; //The color indicator: will be replaced with image
+	private Image image; //The image indicator
+
+	//The game panel to draw the image on
+	private GamePanel gamePanel;
 
 	//Constructor: takes in the number
-	public Pillow (int numIn, int indexIn)
+	public Pillow (int numIn, int indexIn, GamePanel gamePanelIn)
 	{
 		//Set its picked state
 		picked = false;
@@ -76,6 +80,9 @@ public class Pillow
 		//Set the pillows properties
 		generateProperties();
 		
+		//GamePanel
+		gamePanel = gamePanelIn;
+		
 		//This pillow exists
 		existence = true;
 		
@@ -92,25 +99,25 @@ public class Pillow
 				heal = 0;
 				speedFactor = 2; //Really fast
 				damage = 1; //But kinda weak. However, it's hard to miss.
-				color = new Color(255, 255, 125); //Very bright yellow
+				image = LoadedImages.lightPillow; //Very bright yellow
 				break;
 			case 1: //Normal
 				heal = 0;
 				speedFactor = 1; //Normal
 				damage = 2;
-				color = new Color(255, 255, 0);
+				image = LoadedImages.pillow;
 				break;
 			case 2: //Heavy
 				heal = 0;
 				speedFactor = 0.7; //Slow
 				damage = 4; //But REALLY harmful. However, this usually won't happen unless you're (its) really stuck
-				color = new Color(100, 100, 100);
+				image = LoadedImages.heavyPillow;
 				break;
 			case 3: //Heal
 				heal = 1; //Good for heal (not amazing)
 				speedFactor = 0.5; //bad for everything else
 				damage = 1;
-				color = new Color(255, 200, 200); //Pink!
+				image = LoadedImages.healPillow; //Pink!
 				break;
 			default:
 				System.out.println("ERROR: could not give a pillow type");
@@ -159,8 +166,7 @@ public class Pillow
 		if (existence)
 		{
 			//Simply draws a square, which represents the pillow
-			g.setColor(color);
-			g.fillRect((int)x, (int)y, 50, 50);
+			g.drawImage(image, (int)x, (int)y, gamePanel);
 			
 			//Draw the number on the pillow
 			g.setColor(new Color(0, 0, 0));

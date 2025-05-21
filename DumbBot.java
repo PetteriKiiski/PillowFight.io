@@ -35,7 +35,7 @@ public class DumbBot extends Bot
 			System.out.println("ERROR: Not a Bot");
 		}	
 		if (pickedUp.exists())
-		{	
+		{
 				throwPillow(closestBot.getX(), closestBot.getY());	
 		}
 	
@@ -52,7 +52,11 @@ public class DumbBot extends Bot
 		else if (closestPillow.exists())//Search for pillow
 		{
 			moveToward(closestPillow.getX() - x, closestPillow.getY() - y);
-			pickUp(closestPillow);
+			//Only try if it's the closest
+			if (closestPillow.getPillow() == pillows.getClosestTo((int)x, (int)y, -1).getPillow())
+			{
+				pickUp(closestPillow);
+			}
 		}
 	}
 }
