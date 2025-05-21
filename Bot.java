@@ -34,7 +34,7 @@ public class Bot
 	protected boolean immune;
 
 	//For reality checking
-    protected boolean existence; //Does it exist?
+    	protected boolean existence; //Does it exist?
 
 	protected int health;
 
@@ -44,6 +44,7 @@ public class Bot
 	}
 
 	public Bot(PillowArray pA, BotArray bA, double missIn) {
+		
 		//PillowArray
 		pillows = pA;
 		
@@ -222,6 +223,8 @@ public class Bot
 		//Some trig needed in this!
 		//Here's the math
 		//angle = arctan(toY/toX) to get the angle
+		//depending on if toX is negative, you may have to add pi radians to this angle, 
+		//because of the range of arctan
 		//then, add the random degree to this angle
 		//arctan(toY/toX) + randomness
 		//then, convert them both back to x or y values, using cos or sin, respectively
@@ -234,12 +237,33 @@ public class Bot
 		//Randomize the angle: random ANGLE
 		double randomA = (Math.random() * 2 * miss) - miss; // - miss to make negative values possible: missable in both directions
 
+		//Modification of angle
+		double mod = 0;
+
+		//We must ensure that the x value of the new value is more than x, otherwise, change
+		//We ensure this with two checks:
+		// 1. Is toX - x < 0?
+		// 2. Does the x coordinate change parity during randomization
+		//
+		// Then: if ((1 && !2) || (!1 && 2)), we change the parity
+		//
+		// 1, but not both. Sounds like XOR... but java doesn't (I think) have this
+		//
+		// The first check is trivial
+		// For the second check: We know the first parity before randomization is always POSITIVE
+		// This is due to arctan always being between -pi/2 and pi/2
+		// So, if after the randomization it's negative, we know that the parity shifted
+		if ((toX - x < 0 && Math.cos(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomA) > 0) || (toX - x > 0 && Math.cos(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomA) < 0))
+		{
+			mod = Math.PI;
+		}
+
 		//Use the math
 		if (toX - x != 0) //No zero division!
 		{
-			pickedUp.throwPillow(Math.cos(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomA), Math.sin(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomA));
+			pickedUp.throwPillow(Math.cos(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomA + mod), Math.sin(Math.atan(((int)(toY - y)/(int)(toX - x))) + randomA + mod));
 		}
-		else //The angle is pi/2 radians or 3pi/2 radians in this case, depending on the y
+		else //The angle is pi/2 radians or -pi/2 radians in this case, depending on the y
 		{
 			if (toY - y > 0)
 			{
@@ -247,9 +271,9 @@ public class Bot
 			}
 			else if (toY - y < 0)
 			{
-				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomA), Math.sin(Math.PI / 2 + randomA));
+				pickedUp.throwPillow(Math.cos(Math.PI / 2 + randomA), Math.sin(-Math.PI / 2 + randomA));
 			}
-			else //We want to stay still, choose a random direction
+			else //We "want" to stay still, choose a random direction
 			{
 				double randomAngle = Math.random() * 2 * Math.PI;
 				pickedUp.throwPillow(Math.cos(randomAngle), Math.sin(randomAngle));
