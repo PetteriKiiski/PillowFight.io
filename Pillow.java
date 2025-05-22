@@ -50,6 +50,7 @@ public class Pillow
 	private int damage; //self-explanatory
 	private int heal; //how much it heals
 	private Image image; //The image indicator
+	private Color numColor; //The color of the number
 
 	//The game panel to draw the image on
 	private GamePanel gamePanel;
@@ -93,6 +94,7 @@ public class Pillow
 	public void generateProperties()
 	{
 		int type = (int)(Math.random() * 4);
+		numColor = new Color(0, 0, 0); //In most cases it's just black
 		switch (type)
 		{
 			case 0: //Light
@@ -112,6 +114,7 @@ public class Pillow
 				speedFactor = 0.7; //Slow
 				damage = 4; //But REALLY harmful. However, this usually won't happen unless you're (its) really stuck
 				image = LoadedImages.heavyPillow;
+				numColor = new Color(200, 200, 200); //In this case it's light grey
 				break;
 			case 3: //Heal
 				heal = 1; //Good for heal (not amazing)
@@ -169,7 +172,7 @@ public class Pillow
 			g.drawImage(image, (int)x, (int)y, gamePanel);
 			
 			//Draw the number on the pillow
-			g.setColor(new Color(0, 0, 0));
+			g.setColor(numColor);
 			g.setFont(new Font("Arial", Font.PLAIN, 35));
 			g.drawString(Integer.toString(num), (int)x+15, (int)y+38);
 		}
