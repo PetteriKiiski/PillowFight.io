@@ -23,7 +23,7 @@ public class PillowFight
 		LoadedImages.loadImages(); //Load all the images
 		JFrame frame = new JFrame("Pillow Fight.io");
 		frame.setSize(1000, 800);
-		frame.setLocation(200, 30);
+		frame.setLocation(200, 0);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
 		GameHolder holder = new GameHolder();
@@ -51,7 +51,7 @@ class GameHolder extends JPanel
 		LosePanel lp = new LosePanel();
 		GamePanel gp = new GamePanel(cards, this, lp, learnPanel);
 		HomePanel hp = new HomePanel(cards, this, gp);
-		InstructionsPanel ip = new InstructionsPanel();
+		InstructionsPanel ip = new InstructionsPanel(cards, this);
 		FamePanel fp = new FamePanel();
 		
 		//Actually add all these panels

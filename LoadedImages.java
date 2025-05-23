@@ -3,6 +3,7 @@ import java.io.File;
 import java.awt.Image;
 import java.io.IOException;
 
+//All images are created here
 public class LoadedImages
 {
 	public static Image pillow;
@@ -12,6 +13,14 @@ public class LoadedImages
 	public static Image emptyHeart;
 	public static Image halfHeart;
 	public static Image fullHeart;
+	public static Image welcome;
+	public static Image overview;
+	public static Image learnHold;
+	public static Image holding;
+	public static Image hit;
+	public static Image lowHealth;
+	public static Image findHeal;
+	public static Image healed;
 	
 	public static void loadImages()
 	{
@@ -24,6 +33,14 @@ public class LoadedImages
 			emptyHeart = ImageIO.read(new File("images/emptyHeart.png"));
 			halfHeart = ImageIO.read(new File("images/halfHeart.png"));
 			fullHeart = ImageIO.read(new File("images/fullHeart.png"));
+			welcome = ImageIO.read(new File("images/Welcome.png"));
+			overview = ImageIO.read(new File("images/Overview.png"));
+			learnHold = ImageIO.read(new File("images/learnHold.png"));
+			holding = ImageIO.read(new File("images/holding.png"));
+			hit = ImageIO.read(new File("images/Hit.png"));
+			lowHealth = ImageIO.read(new File("images/LowHealth.png"));
+			findHeal = ImageIO.read(new File("images/FindHeal.png"));
+			healed = ImageIO.read(new File("images/Healed.png"));
 		}
 		catch (IOException err)
 		{
