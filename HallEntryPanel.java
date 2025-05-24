@@ -16,7 +16,7 @@ public class HallEntryPanel extends JPanel
 
 	public HallEntryPanel(FamePanel famePanelIn, GameHolder holderIn, CardLayout cardsIn)
 	{
-		setBackground(new Color(0, 255, 0));
+		setBackground(new Color(255, 255, 255));
 		setLayout(null); //I just need the textField to be centered.
 
 		//The hall of fame
@@ -44,6 +44,12 @@ public class HallEntryPanel extends JPanel
 		add(nameField);
 		add(directionsLabel1);
 		add(directionsLabel2);
+	}
+
+	//Protected -> public access
+	public void changeBackground(Color color)
+	{
+		setBackground(color);
 	}
 
 	//To set the score, since this can't be done on construction

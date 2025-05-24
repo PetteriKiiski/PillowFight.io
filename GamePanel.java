@@ -66,10 +66,14 @@ public class GamePanel extends JPanel
 	public void setImmune(boolean immunity)
 	{
 		immune = immunity;
+		player.immune = immunity;
 	}
 
 	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel, LearnPanel learnPanel, FamePanel hallPanelIn, HallEntryPanel entryPanelIn)
 	{
+		//Default background
+		setBackground(new Color(255, 255, 255));
+
 		//Things that we need to change panels
 		cards = cardsIn;
 		mainPanel = mainPanelIn;
@@ -119,6 +123,12 @@ public class GamePanel extends JPanel
 		addMouseListener(new ThrowListener());
 	}
 	
+	//Protected -> public
+	public void changeBackground(Color color)
+	{
+		setBackground(color);
+	}
+
 	public PlayerBot getPlayer()
 	{
 		return player;
@@ -228,6 +238,9 @@ public class GamePanel extends JPanel
 	public void start()
 	{
 		timer.start();
+		//Also resets things, to prevent cheating
+		player.health = 6;
+		score = 0;
 	}
 	
 	//Paint component!
@@ -384,7 +397,7 @@ class ButtonListener implements ActionListener
 	
 	public void actionPerformed(ActionEvent evt)
 	{
-		gamePanel.immune = true;
+		gamePanel.setImmune(true);
 		cards.show(panel, "Home");
 	}
 }
@@ -510,7 +523,13 @@ class AnimateListener implements ActionListener
 			{
 				cards.show(mainPanel, "Loss");
 			}
-			panel.immune = true;
+			panel.setImmune(true);
+
+			//Stop moving
+			moveLeft(false);
+			moveRight(false);
+			moveUp(false);
+			moveDown(false);
 		}
 		
 		//Then, repaint

@@ -9,16 +9,30 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButton;
 
 public class HomePanel extends JPanel
 {
-	CardLayout cards;
-	GameHolder mainCanvas;
+	private CardLayout cards;
+	private GameHolder mainCanvas;
 	
-	GamePanel gamePanel; //Needs to be reset before starting
-	
+	private GamePanel gamePanel; //Needs to be reset before starting
+
+	private Color backgroundColor;
+
+	//So that color's may be changed
+	JRadioButton color1;
+	JRadioButton color2;
+	JRadioButton color3;
+	JRadioButton color4;
+
 	public HomePanel(CardLayout cardsIn, GameHolder mainCanvasIn, GamePanel gamePanelIn)
 	{
+		//Null layout
+		setLayout(null);
+
+		//The game panel
 		gamePanel = gamePanelIn;
 		
 		//Set our field variables, taken from parameters
@@ -27,16 +41,38 @@ public class HomePanel extends JPanel
 		
 		//Initialize our Option Listener
 		OptionListener opts = new OptionListener();
+
+		//For the background color
+		backgroundColor = new Color(255, 255, 255);
+		ButtonGroup colorGroup = new ButtonGroup();
+		color1 = new JRadioButton("RED");
+		colorGroup.add(color1);
+		color1.addActionListener(opts);
+		color1.setBounds(310, 150, 100, 20);
+		add(color1);
+		color2 = new JRadioButton("BLUE");
+		colorGroup.add(color2);
+		color2.addActionListener(opts);
+		color2.setBounds(310, 180, 100, 20);
+		add(color2);
+		color3 = new JRadioButton("GREEN");
+		colorGroup.add(color3);
+		color3.addActionListener(opts);
+		color3.setBounds(310, 210, 100, 20);
+		add(color3);
+		color4 = new JRadioButton("WHITE");
+		colorGroup.add(color4);
+		color4.doClick(); //Click before the actionListener
+		color4.addActionListener(opts);
+		color4.setBounds(310, 240, 100, 20);
+		add(color4);
+
+		//Create all our components for this panel: this is really big	
 		
-		//We will use null layout for this one
-		setLayout(null);
-		
-			//Create all our components for this panel: this is really big	
 		//Title JLabel
 		JLabel titleLabel = new JLabel("Pillow Fight.io", JLabel.CENTER);
 		titleLabel.setBounds(0, 0, 1000, 180);
 		titleLabel.setFont(new Font("Arial", Font.ITALIC, 50));
-		titleLabel.setBackground(Color.BLUE);
 		
 		//Screen Selection: Uses a JMenu
 		JMenuBar screenBar = new JMenuBar();
@@ -59,11 +95,24 @@ public class HomePanel extends JPanel
 		add(titleLabel);
 		add(screenBar);
 
-		//revalidate(); //Simply put, this updates the layout tree.
-			      //This is needed to recalculate the position of the pop up menu
-		//repaint(); //Then add these changes
+		//Change the background of everything
+		changeBackground(new Color(255, 255, 255));
 	}
 	
+	public void changeBackground(Color color) //Public function access
+	{
+		setBackground(color);
+		color1.setBackground(color);
+		color2.setBackground(color);
+		color3.setBackground(color);
+		color4.setBackground(color);
+	}
+
+	public Color getBackColor()
+	{
+		return backgroundColor;
+	}
+
 	//This just listens to this page in general. Mostly will listen to options
 	class OptionListener implements ActionListener
 	{
@@ -82,6 +131,23 @@ public class HomePanel extends JPanel
 					break;
 				case "Hall of Fame":
 					cards.show(mainCanvas, "Fame");
+					break;
+				case "RED":
+					backgroundColor = new Color(255, 0, 0);
+					mainCanvas.updateColor();
+					break;
+				case "GREEN":
+					backgroundColor = new Color(0, 255, 0);
+					mainCanvas.updateColor();
+					break;
+				case "BLUE":
+					backgroundColor = new Color(0, 0, 255);
+					mainCanvas.updateColor();
+					break;
+				case "WHITE":
+					backgroundColor = new Color(255, 255, 255);
+					mainCanvas.updateColor();
+					break;
 				//More will be added
 			}
 		}

@@ -18,6 +18,10 @@ public class LearnPanel extends JPanel
 
 	public LearnPanel(CardLayout cards, GameHolder panel)
 	{	
+		//Default background
+		setBackground(new Color(255, 255, 255));
+
+		//Null layout
 		setLayout(null);
 
 		//Where do we go next?
@@ -44,6 +48,11 @@ public class LearnPanel extends JPanel
 		//Don't add the button quite yet. After 5 seconds, when you've LEARNED
 	}
 	
+	public void changeBackground(Color color)
+	{
+		setBackground(color);
+	}
+
 	//Set the math problem to teach
 	public void setProblem(int solution, int typeIn, int operation) //These values represent the entire operation:
 	{

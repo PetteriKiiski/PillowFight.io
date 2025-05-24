@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 public class PillowFight
 {
@@ -32,9 +33,17 @@ public class PillowFight
 	}
 }
 
+//Holds the game
 class GameHolder extends JPanel
 {
 	private final boolean PRINT_POSITION = true;
+
+	//These panels are for updating background color
+	LearnPanel learnPanel;
+	HallEntryPanel hep;
+	GamePanel gp;
+	HomePanel hp;
+	InstructionsPanel ip;
 
 	//Cards are placed on this.
 	private JPanel cardPanel;
@@ -47,14 +56,13 @@ class GameHolder extends JPanel
 		setLayout(cards);
 		
 		//Create and add all our panels
-		LearnPanel learnPanel = new LearnPanel(cards, this);
+		learnPanel = new LearnPanel(cards, this);
 		LosePanel lp = new LosePanel();
 		FamePanel fp = new FamePanel();
-		HallEntryPanel hep = new HallEntryPanel(fp, this, cards);
-		GamePanel gp = new GamePanel(cards, this, lp, learnPanel, fp, hep);
-		HomePanel hp = new HomePanel(cards, this, gp);
-		InstructionsPanel ip = new InstructionsPanel(cards, this);
-		
+		hep = new HallEntryPanel(fp, this, cards);
+		gp = new GamePanel(cards, this, lp, learnPanel, fp, hep);
+		hp = new HomePanel(cards, this, gp);
+		ip = new InstructionsPanel(cards, this);		
 
 		//Actually add all these panels
 		add("Home", hp);
@@ -70,5 +78,15 @@ class GameHolder extends JPanel
 		{
 			addMouseListener(new PositionListener());
 		}
+	}
+
+	public void updateColor()
+	{
+		Color updatedColor = hp.getBackColor();
+		learnPanel.changeBackground(updatedColor);
+		hep.changeBackground(updatedColor);
+		gp.changeBackground(updatedColor);
+		hp.changeBackground(updatedColor);
+		ip.changeBackground(updatedColor);
 	}
 }

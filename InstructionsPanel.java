@@ -20,7 +20,9 @@ public class InstructionsPanel extends JPanel
 	
 	public InstructionsPanel(CardLayout cards, GameHolder showPanel)
 	{
-		
+		//Default background
+		setBackground(new Color(255, 255, 255));
+
 		//We use border layout here. Especially since it didn't work in the game panel
 		setLayout(new BorderLayout(0, 0));
 	
@@ -49,6 +51,12 @@ public class InstructionsPanel extends JPanel
 		add(BorderLayout.CENTER, imagePanel);
 	}
 	
+	//Protected -> public access
+	public void changeBackground(Color color)
+	{
+		setBackground(color);
+	}
+
 	//Label turning mechanisms
 	public void next()
 	{
