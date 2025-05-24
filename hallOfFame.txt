@@ -4,7 +4,7 @@ Peter: 125
 Peter: 25
 Peter: 25
 Peter: 25
-EMPTY: 0
+Peter: 25
 EMPTY: 0
 EMPTY: 0
 EMPTY: 0

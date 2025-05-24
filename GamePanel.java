@@ -63,12 +63,6 @@ public class GamePanel extends JPanel
 	//The hall of fame panel
 	private FamePanel hallPanel;
 
-	public void setImmune(boolean immunity)
-	{
-		immune = immunity;
-		player.immune = immunity;
-	}
-
 	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel, LearnPanel learnPanel, FamePanel hallPanelIn, HallEntryPanel entryPanelIn)
 	{
 		//Default background
@@ -122,7 +116,20 @@ public class GamePanel extends JPanel
 		//And, finally the mouseListener
 		addMouseListener(new ThrowListener());
 	}
-	
+
+	//Regenerates the pillows, using PillowArray
+	public void regenPillows()
+	{
+		pillows.generatePillows();
+	}
+
+	//Sets immunity
+	public void setImmune(boolean immunity)
+	{
+		immune = immunity;
+		player.immune = immunity;
+	}
+
 	//Protected -> public
 	public void changeBackground(Color color)
 	{

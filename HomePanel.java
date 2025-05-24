@@ -11,6 +11,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
+import javax.swing.JCheckBox;
 
 public class HomePanel extends JPanel
 {
@@ -21,11 +22,15 @@ public class HomePanel extends JPanel
 
 	private Color backgroundColor;
 
-	//So that color's may be changed
+	//So that colors may be changed
 	JRadioButton color1;
 	JRadioButton color2;
 	JRadioButton color3;
 	JRadioButton color4;
+	JCheckBox pillowBox;
+	JCheckBox lightBox;
+	JCheckBox heavyBox;
+	JCheckBox healBox;
 
 	public HomePanel(CardLayout cardsIn, GameHolder mainCanvasIn, GamePanel gamePanelIn)
 	{
@@ -42,30 +47,62 @@ public class HomePanel extends JPanel
 		//Initialize our Option Listener
 		OptionListener opts = new OptionListener();
 
+		//Label for the background color
+		JLabel bgLabel = new JLabel("Background");
+		bgLabel.setBounds(310, 150, 100, 20);
+		add(bgLabel);
+
 		//For the background color
 		backgroundColor = new Color(255, 255, 255);
 		ButtonGroup colorGroup = new ButtonGroup();
 		color1 = new JRadioButton("RED");
 		colorGroup.add(color1);
 		color1.addActionListener(opts);
-		color1.setBounds(310, 150, 100, 20);
+		color1.setBounds(310, 180, 100, 20);
 		add(color1);
 		color2 = new JRadioButton("BLUE");
 		colorGroup.add(color2);
 		color2.addActionListener(opts);
-		color2.setBounds(310, 180, 100, 20);
+		color2.setBounds(310, 210, 100, 20);
 		add(color2);
 		color3 = new JRadioButton("GREEN");
 		colorGroup.add(color3);
 		color3.addActionListener(opts);
-		color3.setBounds(310, 210, 100, 20);
+		color3.setBounds(310, 240, 100, 20);
 		add(color3);
 		color4 = new JRadioButton("WHITE");
 		colorGroup.add(color4);
 		color4.doClick(); //Click before the actionListener
 		color4.addActionListener(opts);
-		color4.setBounds(310, 240, 100, 20);
+		color4.setBounds(310, 270, 100, 20);
 		add(color4);
+
+		//Another JLabel
+		JLabel genLabel = new JLabel("Pillow Generation");
+		genLabel.setBounds(420, 150, 100, 20);
+		add(genLabel);
+
+		//For the pillow generation: click before listener
+		pillowBox = new JCheckBox("Normal");
+		pillowBox.setBounds(420, 180, 100, 20);
+		pillowBox.doClick();
+		pillowBox.addActionListener(opts);
+		add(pillowBox);
+		lightBox = new JCheckBox("Light");
+		lightBox.setBounds(420, 210, 100, 20);
+		lightBox.doClick();
+		lightBox.addActionListener(opts);
+		add(lightBox);
+		heavyBox = new JCheckBox("Heavy");
+		heavyBox.setBounds(420, 240, 100, 20);
+		heavyBox.doClick();
+		heavyBox.addActionListener(opts);
+		add(heavyBox);
+		healBox = new JCheckBox("Heal");
+		healBox.setBounds(420, 270, 100, 20);
+		healBox.doClick();
+		healBox.addActionListener(opts);
+		add(healBox);
 
 		//Create all our components for this panel: this is really big	
 		
@@ -98,7 +135,7 @@ public class HomePanel extends JPanel
 		//Change the background of everything
 		changeBackground(new Color(255, 255, 255));
 	}
-	
+
 	public void changeBackground(Color color) //Public function access
 	{
 		setBackground(color);
@@ -106,6 +143,11 @@ public class HomePanel extends JPanel
 		color2.setBackground(color);
 		color3.setBackground(color);
 		color4.setBackground(color);
+		pillowBox.setBackground(color);
+		lightBox.setBackground(color);
+		heavyBox.setBackground(color);
+		healBox.setBackground(color);
+
 	}
 
 	public Color getBackColor()
@@ -122,6 +164,7 @@ public class HomePanel extends JPanel
 			switch (cmd)
 			{
 				case "START GAME":
+					gamePanel.regenPillows(); //Re-generate the world every time
 					gamePanel.setImmune(true); //Make it immune upon entering.
 					gamePanel.start(); //Start the game on the first time playing
 					cards.show(mainCanvas, "Game");
@@ -132,7 +175,7 @@ public class HomePanel extends JPanel
 				case "Hall of Fame":
 					cards.show(mainCanvas, "Fame");
 					break;
-				case "RED":
+				case "RED": //Set the color of the background
 					backgroundColor = new Color(255, 0, 0);
 					mainCanvas.updateColor();
 					break;
@@ -147,6 +190,18 @@ public class HomePanel extends JPanel
 				case "WHITE":
 					backgroundColor = new Color(255, 255, 255);
 					mainCanvas.updateColor();
+					break;
+				case "Normal": //Should we generate this pillow?
+					Pillow.generatePillowToggle();
+					break;
+				case "Light":
+					Pillow.generateLightPillowToggle();
+					break;
+				case "Heavy":
+					Pillow.generateHeavyPillowToggle();
+					break;
+				case "Heal":
+					Pillow.generateHealPillowToggle();
 					break;
 				//More will be added
 			}

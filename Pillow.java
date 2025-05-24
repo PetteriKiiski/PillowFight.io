@@ -55,6 +55,10 @@ public class Pillow
 	//The game panel to draw the image on
 	private GamePanel gamePanel;
 
+	//The different kinds of pillows: these are private static
+	public static boolean[] pillowGen = new boolean[]{true, true, true, true}; //Default
+	public static int numTypes = 4; //Keep track of this
+
 	//Constructor: takes in the number
 	public Pillow (int numIn, int indexIn, GamePanel gamePanelIn)
 	{
@@ -77,7 +81,7 @@ public class Pillow
 		
 		//Index
 		index = indexIn;
-		
+
 		//Set the pillows properties
 		generateProperties();
 		
@@ -89,11 +93,84 @@ public class Pillow
 		
 		playerThrown = false;
 	}
-	
+
+	//These are static: they impact all instances
+	public static void generatePillowToggle()
+	{
+		pillowGen[1] = !pillowGen[1];
+		if (pillowGen[1])
+		{
+			numTypes++;
+		}
+		else
+		{
+			numTypes--;
+		}
+	}
+
+	public static void generateLightPillowToggle()
+	{
+		pillowGen[0] = !pillowGen[0];
+		if (pillowGen[0])
+		{
+			numTypes++;
+		}
+		else
+		{
+			numTypes--;
+		}
+	}
+
+	public static void generateHeavyPillowToggle()
+	{
+		pillowGen[2] = !pillowGen[2];
+		if (pillowGen[2])
+		{
+			numTypes++;
+		}
+		else
+		{
+			numTypes--;
+		}
+	}
+
+	public static void generateHealPillowToggle()
+	{
+		pillowGen[3] = !pillowGen[3];
+		if (pillowGen[3])
+		{
+			numTypes++;
+		}
+		else
+		{
+			numTypes--;
+		}	
+	}
+
 	//These are all the possibilities for generation
 	public void generateProperties()
 	{
-		int type = (int)(Math.random() * 4);
+		//Limit the generation types
+		int[] types = new int[numTypes];
+		int index = 0; //The next index to add to types array
+		for (int i = 0; i < pillowGen.length; i++)
+		{
+			if (pillowGen[i]) //If this type exists
+			{
+				types[index] = i; //Add to the array this type
+				index++; //Next time we edit, go to the next one
+			}
+		}
+		//Override the no types possibility
+		int type;
+		if (numTypes != 0)
+		{
+			type = types[(int)(Math.random() * numTypes)]; //Get the type out of the possible types
+		}
+		else
+		{
+			type = 1; //The normal pillow
+		}
 		numColor = new Color(0, 0, 0); //In most cases it's just black
 		switch (type)
 		{

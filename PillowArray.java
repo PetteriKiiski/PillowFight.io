@@ -12,19 +12,29 @@ public class PillowArray
 	//Number of pillows
 	public static final int NUM_PILLOWS = 810;
 
+	//To regenerate the pillows
+	GamePanel gamePanel;
+
 	//Create a customizable pillow number
-	public PillowArray(PlayerBot playerIn, GamePanel gamePanel)
+	public PillowArray(PlayerBot playerIn, GamePanel gamePanelIn)
 	{
 		pillows = new Pillow[NUM_PILLOWS];
 		player = playerIn;
 		
+		gamePanel = gamePanelIn;
+
+		generatePillows();
+	}
+
+	public void generatePillows()
+	{
 		for (int i = 0; i < NUM_PILLOWS; i++)
 		{
 			//i % 10 ensures all digits exist in the "world"
 			pillows[i] = new Pillow(i % 10, i, gamePanel);
 		}
 	}
-	
+
 	public void paintPillows(Graphics g)
 	{
 		for (int i = 0; i < pillows.length; i++)
