@@ -63,6 +63,9 @@ public class GamePanel extends JPanel
 	//The hall of fame panel
 	private FamePanel hallPanel;
 
+	//Eligible or not?
+	private boolean eligible;
+
 	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel, LearnPanel learnPanel, FamePanel hallPanelIn, HallEntryPanel entryPanelIn)
 	{
 		//Default background
@@ -113,11 +116,24 @@ public class GamePanel extends JPanel
 		//Initialize the label
 		genLabel(player.getSolution());
 		
+		//Eligible, until proven not
+		eligible = true;
+
 		//And, finally the mouseListener
 		addMouseListener(new ThrowListener());
 	}
 
-	public void setEligibility(boolean eligible) {} //////////////////////////////////////////////////////////////
+	//Sets the eligibility
+	public void setEligibility(boolean eligibleIn) 
+	{
+		eligible = eligibleIn;
+	}
+
+	//Am I eligible???
+	public boolean isEligible()
+	{
+		return eligible;
+	}
 
 	//Regenerates the pillows, using PillowArray
 	public void regenPillows()
@@ -523,14 +539,14 @@ class AnimateListener implements ActionListener
 			if (panel.getLearn() && !panel.immune) //Don't show this panel over and over again, but keep the timer running
 			{
 				learnPanel.setProblem(panel.getSolution(), panel.getType(), panel.getOperation()); //Inform which problem to teach
-				if (hallPanel.isHighScore(panel.getScore()))
+				if (panel.isEligible() && hallPanel.isHighScore(panel.getScore()))
 				{
 					entryPanel.setScore(panel.getScore());
 					learnPanel.hasHighScore();
 				}
 				cards.show(mainPanel, "Learn"); //YOU WILL LEARN
 			}
-			else if (hallPanel.isHighScore(panel.getScore()) && !panel.immune) //This is the order of precedence: there is no need to see the lose panel in this case
+			else if (panel.isEligible() && hallPanel.isHighScore(panel.getScore()) && !panel.immune) //This is the order of precedence: there is no need to see the lose panel in this case
 			{
 				entryPanel.setScore(panel.getScore());
 				cards.show(mainPanel, "Hall Entry");
