@@ -19,12 +19,17 @@ public class BotArray
 		player = playerIn;
 		bots[0] = player;
 
+		generateBots(miss);
+	}
+
+	public void generateBots(double miss)
+	{
 		for (int i = 1; i <= NUM_BOTS; i++)
 		{
-			bots[i] = new DumbBot(pillows, this, miss); //I would make it a loop, but it's a bit too complicated for my liking.
+			bots[i] = new DumbBot(pillows, this, miss);
 		}
 	}
-	
+
 	//FOR ALL OF THESE LOOPS, we start at 1, because 0 is the player
 	
 	//Set the immunity of the player

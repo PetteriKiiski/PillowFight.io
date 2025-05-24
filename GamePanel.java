@@ -123,6 +123,12 @@ public class GamePanel extends JPanel
 		pillows.generatePillows();
 	}
 
+	//Regenerates the bots, using BotArray
+	public void regenBots(double miss) //The miss will come from the slider
+	{
+		bots.generateBots(miss);
+	}
+
 	//Sets immunity
 	public void setImmune(boolean immunity)
 	{

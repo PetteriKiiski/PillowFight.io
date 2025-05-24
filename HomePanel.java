@@ -12,6 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 import javax.swing.JCheckBox;
+import javax.swing.JSlider;
 
 public class HomePanel extends JPanel
 {
@@ -31,6 +32,7 @@ public class HomePanel extends JPanel
 	JCheckBox lightBox;
 	JCheckBox heavyBox;
 	JCheckBox healBox;
+	JSlider accuracySlider;
 
 	public HomePanel(CardLayout cardsIn, GameHolder mainCanvasIn, GamePanel gamePanelIn)
 	{
@@ -78,7 +80,7 @@ public class HomePanel extends JPanel
 		add(color4);
 
 		//Another JLabel
-		JLabel genLabel = new JLabel("Pillow Generation");
+		JLabel genLabel = new JLabel("Pillow Gen."); //If you can't tell, this stands for pillow generation
 		genLabel.setBounds(420, 150, 100, 20);
 		add(genLabel);
 
@@ -104,7 +106,19 @@ public class HomePanel extends JPanel
 		healBox.addActionListener(opts);
 		add(healBox);
 
-		//Create all our components for this panel: this is really big	
+		//Title for our slider
+		JLabel sliderTitle = new JLabel("Bot Accuracy");
+		sliderTitle.setBounds(530, 150, 100, 20);
+		add(sliderTitle);
+
+		//And the slider itself
+		accuracySlider = new JSlider(0, 100, 50);
+		accuracySlider.setBounds(530, 180, 200, 50);
+		accuracySlider.setMajorTickSpacing(20);
+		accuracySlider.setPaintTicks(true);
+		accuracySlider.setLabelTable(accuracySlider.createStandardLabels(20));
+		accuracySlider.setPaintLabels(true);
+		add(accuracySlider);
 		
 		//Title JLabel
 		JLabel titleLabel = new JLabel("Pillow Fight.io", JLabel.CENTER);
@@ -124,7 +138,7 @@ public class HomePanel extends JPanel
 		screenMenu.add(instItem);
 		screenMenu.add(startItem);
 		screenBar.add(screenMenu);
-		
+
 		//Then, finally set the boundaries of our JMenu
 		screenBar.setBounds(200, 150, 100, 20);
 
@@ -147,7 +161,7 @@ public class HomePanel extends JPanel
 		lightBox.setBackground(color);
 		heavyBox.setBackground(color);
 		healBox.setBackground(color);
-
+		accuracySlider.setBackground(color);
 	}
 
 	public Color getBackColor()
@@ -165,7 +179,12 @@ public class HomePanel extends JPanel
 			{
 				case "START GAME":
 					gamePanel.regenPillows(); //Re-generate the world every time
-					gamePanel.setImmune(true); //Make it immune upon entering.
+					gamePanel.regenBots((Math.PI / 2) * ((100 - accuracySlider.getValue()) / 100)); //0% accuracy represents Math.PI / 2.
+									  //100% accuracy represents 0.
+									  //So, I just use (Math.PI / 2) * ((100 - accuracy) / 100)
+
+					//Start immune
+					gamePanel.setImmune(true);
 					gamePanel.start(); //Start the game on the first time playing
 					cards.show(mainCanvas, "Game");
 					break;

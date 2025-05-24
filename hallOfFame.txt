@@ -1,10 +1,10 @@
 Peter: 2175
+Peter: 1050
 Peter: 250
 Peter: 125
 Peter: 25
 Peter: 25
 Peter: 25
 Peter: 25
-EMPTY: 0
 EMPTY: 0
 EMPTY: 0
