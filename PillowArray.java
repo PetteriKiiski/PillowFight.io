@@ -205,7 +205,10 @@ public class PillowArray
 	//After healing
 	public void drop()
 	{
-		pillows[pickedUp].drop();
+		if (pickedUp != -1)
+		{
+			pillows[pickedUp].drop();
+		}
 		pickedUp = -1;
 	}
 	

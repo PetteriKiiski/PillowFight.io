@@ -241,6 +241,7 @@ public class GamePanel extends JPanel
 		//Also resets things, to prevent cheating
 		player.health = 6;
 		score = 0;
+		pillows.drop();
 	}
 	
 	//Paint component!

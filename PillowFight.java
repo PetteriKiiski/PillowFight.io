@@ -57,8 +57,8 @@ class GameHolder extends JPanel
 		
 		//Create and add all our panels
 		learnPanel = new LearnPanel(cards, this);
-		LosePanel lp = new LosePanel();
-		FamePanel fp = new FamePanel();
+		LosePanel lp = new LosePanel(this, cards);
+		FamePanel fp = new FamePanel(this, cards);
 		hep = new HallEntryPanel(fp, this, cards);
 		gp = new GamePanel(cards, this, lp, learnPanel, fp, hep);
 		hp = new HomePanel(cards, this, gp);
