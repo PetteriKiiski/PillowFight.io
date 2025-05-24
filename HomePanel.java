@@ -13,6 +13,9 @@ import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 import javax.swing.JCheckBox;
 import javax.swing.JSlider;
+import java.awt.Graphics;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class HomePanel extends JPanel
 {
@@ -24,20 +27,26 @@ public class HomePanel extends JPanel
 	private Color backgroundColor;
 
 	//So that colors may be changed
-	JRadioButton color1;
-	JRadioButton color2;
-	JRadioButton color3;
-	JRadioButton color4;
-	JCheckBox pillowBox;
-	JCheckBox lightBox;
-	JCheckBox heavyBox;
-	JCheckBox healBox;
-	JSlider accuracySlider;
+	private JRadioButton color1;
+	private JRadioButton color2;
+	private JRadioButton color3;
+	private JRadioButton color4;
+	private JCheckBox pillowBox;
+	private JCheckBox lightBox;
+	private JCheckBox heavyBox;
+	private JCheckBox healBox;
+	private JSlider accuracySlider;
+
+	//Elligibility: are you aloud to run for hall of fame?
+	private boolean eligibility;
 
 	public HomePanel(CardLayout cardsIn, GameHolder mainCanvasIn, GamePanel gamePanelIn)
 	{
 		//Null layout
 		setLayout(null);
+
+		//Elligibility: yes, you start off with elligibility
+		eligibility = true;
 
 		//The game panel
 		gamePanel = gamePanelIn;
@@ -118,6 +127,7 @@ public class HomePanel extends JPanel
 		accuracySlider.setPaintTicks(true);
 		accuracySlider.setLabelTable(accuracySlider.createStandardLabels(20));
 		accuracySlider.setPaintLabels(true);
+		accuracySlider.addChangeListener(new SliderChanged()); //Check for eligibility
 		add(accuracySlider);
 		
 		//Title JLabel
@@ -148,6 +158,30 @@ public class HomePanel extends JPanel
 
 		//Change the background of everything
 		changeBackground(new Color(255, 255, 255));
+	}
+
+	//Paint the elligibility box
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		if (eligibility)
+		{
+			g.setColor(new Color(0, 255, 0));
+			g.fillRect(540, 240, 100, 50);
+			g.setColor(new Color(0, 0, 0));
+			g.drawRect(540, 240, 100, 50); //Border the rect
+			g.setFont(new Font("Times new roman", Font.PLAIN, 20));
+			g.drawString("Eligible", 550, 280);
+		}
+		else
+		{
+			g.setColor(new Color(255, 0, 0));
+			g.fillRect(540, 240, 100, 50);
+			g.setColor(new Color(0, 0, 0));
+			g.drawRect(540, 240, 100, 50);
+			g.setFont(new Font("Times new roman", Font.PLAIN, 20));
+			g.drawString("Ineligible", 550, 280);
+		}
 	}
 
 	public void changeBackground(Color color) //Public function access
@@ -184,6 +218,7 @@ public class HomePanel extends JPanel
 									  //So, I just use (Math.PI / 2) * ((100 - accuracy) / 100)
 
 					//Start immune
+					gamePanel.setEligibility((eligibility));
 					gamePanel.setImmune(true);
 					gamePanel.start(); //Start the game on the first time playing
 					cards.show(mainCanvas, "Game");
@@ -224,6 +259,20 @@ public class HomePanel extends JPanel
 					break;
 				//More will be added
 			}
+			//Set the elligbility: something may have changed
+			//Essentially: is the slider correct AND are all pillows enabled
+			eligibility = (accuracySlider.getValue() == 50 && Pillow.pillowGen[0] && Pillow.pillowGen[1] && Pillow.pillowGen[2] && Pillow.pillowGen[3]);
+			repaint(); //Repaint for elligibility
+		}
+	}
+
+	//This is kind of stupid: it's JUST to check if we're still eligible
+	class SliderChanged implements ChangeListener
+	{
+		public void stateChanged(ChangeEvent evt)
+		{
+			eligibility = (accuracySlider.getValue() == 50 && Pillow.pillowGen[0] && Pillow.pillowGen[1] && Pillow.pillowGen[2] && Pillow.pillowGen[3]);
+			repaint(); //Repaint for elligibility
 		}
 	}
 }

@@ -117,6 +117,8 @@ public class GamePanel extends JPanel
 		addMouseListener(new ThrowListener());
 	}
 
+	public void setEligibility(boolean eligible) {} //////////////////////////////////////////////////////////////
+
 	//Regenerates the pillows, using PillowArray
 	public void regenPillows()
 	{

@@ -36,7 +36,7 @@ public class PillowFight
 //Holds the game
 class GameHolder extends JPanel
 {
-	private final boolean PRINT_POSITION = true;
+	private final boolean PRINT_POSITION = false; //Unless I work on this later, this will now be turned off
 
 	//These panels are for updating background color
 	LearnPanel learnPanel;

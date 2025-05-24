@@ -55,7 +55,7 @@ public class Pillow
 	//The game panel to draw the image on
 	private GamePanel gamePanel;
 
-	//The different kinds of pillows: these are private static
+	//The different kinds of pillows: these are public static
 	public static boolean[] pillowGen = new boolean[]{true, true, true, true}; //Default
 	public static int numTypes = 4; //Keep track of this
 
