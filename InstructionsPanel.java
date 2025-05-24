@@ -76,7 +76,9 @@ public class InstructionsPanel extends JPanel
 	public void reset()
 	{
 		labelIndex = 0;
+		topLabel.setText(labelStrings[labelIndex]);
 		imagePanel.reset();
+		repaint();
 	}
 }
 
@@ -156,6 +158,8 @@ class ImagePanel extends JPanel
 	public void reset()
 	{
 		imageIndex = 0;
+		image = imageArray[imageIndex];
+		repaint();
 	}
 	
 	//Paint image

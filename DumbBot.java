@@ -8,6 +8,7 @@ public class DumbBot extends Bot
 		timeCounter = 0;
 	}
 	
+	//Decide what the bot is to do.
 	public void decide() throws NotAPillowException, NotABotException
 	{
 		CycledPillow closestPillow = pillows.getClosestTo((int)x, (int)y, num);

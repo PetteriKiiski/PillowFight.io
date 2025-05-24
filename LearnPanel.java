@@ -14,10 +14,14 @@ public class LearnPanel extends JPanel
 	private JLabel secondLabel;
 	private JButton loseButton;
 	private Timer timer;
+	private boolean toHighScore; //Where do we go next?
 
 	public LearnPanel(CardLayout cards, GameHolder panel)
 	{	
 		setLayout(null);
+
+		//Where do we go next?
+		toHighScore = false; //By default
 
 		//The two labels
 		firstLabel = new JLabel();
@@ -70,7 +74,13 @@ public class LearnPanel extends JPanel
 		removeButton();
 		timer.start(); //Start the timer!
 	}
-	
+
+	//Has a high score: go to hall panel next
+	public void hasHighScore()
+	{
+		toHighScore = true;
+	}
+
 	public void haveButton()
 	{
 		add(loseButton); //Enable the button the makes you lose
@@ -107,7 +117,15 @@ public class LearnPanel extends JPanel
 
 		public void actionPerformed(ActionEvent evt)
 		{
-			cards.show(panel, "Loss");
+			if (!toHighScore)
+			{
+				cards.show(panel, "Loss");
+			}
+			else
+			{
+				toHighScore = false; //Reset the state
+				cards.show(panel, "Hall Entry");
+			}
 		}
 	}
 }

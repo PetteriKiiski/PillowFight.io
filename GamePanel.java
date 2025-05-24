@@ -60,12 +60,15 @@ public class GamePanel extends JPanel
 	//Score!!! Get this as high as possible
 	private int score;
 
+	//The hall of fame panel
+	private FamePanel hallPanel;
+
 	public void setImmune(boolean immunity)
 	{
 		immune = immunity;
 	}
 
-	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel, LearnPanel learnPanel)
+	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel, LearnPanel learnPanel, FamePanel hallPanelIn, HallEntryPanel entryPanelIn)
 	{
 		//Things that we need to change panels
 		cards = cardsIn;
@@ -94,7 +97,7 @@ public class GamePanel extends JPanel
 		player = new PlayerBot();
 		pillows = new PillowArray(player, this);
 		bots = new BotArray(pillows, Math.PI / 4, player, this); //miss represents the difficulty. In radians. Player represents the player
-		aL = new AnimateListener(this, pillows, bots, cards, mainPanel, losePanel, learnPanel);
+		aL = new AnimateListener(this, pillows, bots, cards, mainPanel, losePanel, learnPanel, hallPanelIn, entryPanelIn);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener
 		
@@ -407,6 +410,12 @@ class AnimateListener implements ActionListener
 	//The lose panel
 	LosePanel losePanel;
 	
+	//The hall of fame: not ever switched to from this panel, but we do use it's functions
+	FamePanel hallPanel;
+
+	//HallEntryPanel: we do switch to this one however
+	HallEntryPanel entryPanel;
+
 	//The learning panel
 	LearnPanel learnPanel;
 	
@@ -425,7 +434,8 @@ class AnimateListener implements ActionListener
 	public static final int DELAY = 16; //in ms : this is the timer delay
 
 	//Take in all the info we need. Which is a lot.
-	public AnimateListener(GamePanel panelIn, PillowArray pillowsIn, BotArray botsIn, CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel, LearnPanel learnPanelIn)
+	public AnimateListener(GamePanel panelIn, PillowArray pillowsIn, BotArray botsIn, CardLayout cardsIn, JPanel mainPanelIn, 
+			LosePanel lossPanel, LearnPanel learnPanelIn, FamePanel hallPanelIn, HallEntryPanel entryPanelIn)
 	{
 		pillows = pillowsIn;
 		bots = botsIn;
@@ -438,6 +448,8 @@ class AnimateListener implements ActionListener
 		cards = cardsIn;
 		losePanel = lossPanel;
 		learnPanel = learnPanelIn;
+		hallPanel = hallPanelIn;
+		entryPanel = entryPanelIn;
 	}
 	
 	//"while (true) {" loop
@@ -481,8 +493,18 @@ class AnimateListener implements ActionListener
 			losePanel.setScore(panel.getScore());
 			if (panel.getLearn() && !panel.immune) //Don't show this panel over and over again, but keep the timer running
 			{
-				learnPanel.setProblem(panel.getSolution(), panel.getType(), panel.getOperation()); //Inform the problem to teach
+				learnPanel.setProblem(panel.getSolution(), panel.getType(), panel.getOperation()); //Inform which problem to teach
+				if (hallPanel.isHighScore(panel.getScore()))
+				{
+					entryPanel.setScore(panel.getScore());
+					learnPanel.hasHighScore();
+				}
 				cards.show(mainPanel, "Learn"); //YOU WILL LEARN
+			}
+			else if (hallPanel.isHighScore(panel.getScore()) && !panel.immune) //This is the order of precedence: there is no need to see the lose panel in this case
+			{
+				entryPanel.setScore(panel.getScore());
+				cards.show(mainPanel, "Hall Entry");
 			}
 			else if (!panel.immune)
 			{
@@ -493,7 +515,7 @@ class AnimateListener implements ActionListener
 		
 		//Then, repaint
 		panel.repaint();
-	} 
+	}
 	
 	//The following will be called by the KeyListener
 	public void moveLeft(boolean YoN) //Yes or no, if it was unclear

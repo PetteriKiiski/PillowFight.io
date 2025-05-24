@@ -30,13 +30,13 @@ public class LoadedImages
 			lightPillow = ImageIO.read(new File("images/lightPillow.png"));
 			heavyPillow = ImageIO.read(new File("images/heavyPillow.png"));
 			healPillow = ImageIO.read(new File("images/healPillow.png"));
-			emptyHeart = ImageIO.read(new File("images/emptyHeart.png"));
-			halfHeart = ImageIO.read(new File("images/halfHeart.png"));
-			fullHeart = ImageIO.read(new File("images/fullHeart.png"));
+			emptyHeart = ImageIO.read(new File("images/EmptyHeart.png"));
+			halfHeart = ImageIO.read(new File("images/HalfHeart.png"));
+			fullHeart = ImageIO.read(new File("images/FullHeart.png"));
 			welcome = ImageIO.read(new File("images/Welcome.png"));
 			overview = ImageIO.read(new File("images/Overview.png"));
-			learnHold = ImageIO.read(new File("images/learnHold.png"));
-			holding = ImageIO.read(new File("images/holding.png"));
+			learnHold = ImageIO.read(new File("images/LearnHold.png"));
+			holding = ImageIO.read(new File("images/Holding.png"));
 			hit = ImageIO.read(new File("images/Hit.png"));
 			lowHealth = ImageIO.read(new File("images/LowHealth.png"));
 			findHeal = ImageIO.read(new File("images/FindHeal.png"));
@@ -45,6 +45,7 @@ public class LoadedImages
 		catch (IOException err)
 		{
 			System.err.println("ERROR LOADING IMAGES");
+			err.printStackTrace();
 		}
 	}
 }

@@ -49,11 +49,13 @@ class GameHolder extends JPanel
 		//Create and add all our panels
 		LearnPanel learnPanel = new LearnPanel(cards, this);
 		LosePanel lp = new LosePanel();
-		GamePanel gp = new GamePanel(cards, this, lp, learnPanel);
+		FamePanel fp = new FamePanel();
+		HallEntryPanel hep = new HallEntryPanel(fp, this, cards);
+		GamePanel gp = new GamePanel(cards, this, lp, learnPanel, fp, hep);
 		HomePanel hp = new HomePanel(cards, this, gp);
 		InstructionsPanel ip = new InstructionsPanel(cards, this);
-		FamePanel fp = new FamePanel();
 		
+
 		//Actually add all these panels
 		add("Home", hp);
 		add("Game", gp);
@@ -61,7 +63,8 @@ class GameHolder extends JPanel
 		add("Fame", fp);
 		add("Loss", lp);
 		add("Learn", learnPanel); //Aww man, repeating lp is not aloud
-		
+		add("Hall Entry", hep);
+
 		//For ease of null layout component placement
 		if (PRINT_POSITION)
 		{
