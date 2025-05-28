@@ -1,10 +1,10 @@
 Peter: 2175
+Peter: 2125
+Peter: 1500
+Peter: 1300
+Peter: 1250
+Peter: 1150
+Peter: 1075
 Peter: 1050
-Peter: 250
-Peter: 125
-Peter: 25
-Peter: 25
-Peter: 25
-Peter: 25
-EMPTY: 0
-EMPTY: 0
+Susanna: 1050
+Susanna Kiiski: 1025

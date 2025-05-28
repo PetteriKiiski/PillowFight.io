@@ -606,25 +606,45 @@ class KeyBoardListener implements KeyListener
 	}
 	
 	public void keyReleased(KeyEvent evt) {
-		if (evt.getKeyCode() == KeyEvent.VK_LEFT)
+		
+		if (evt.getKeyCode() == KeyEvent.VK_LEFT || evt.getKeyCode() == KeyEvent.VK_A)
 		{
 			al.moveLeft(false);
 		}
-		if (evt.getKeyCode() == KeyEvent.VK_RIGHT)
+		if (evt.getKeyCode() == KeyEvent.VK_RIGHT || evt.getKeyCode() == KeyEvent.VK_D)
 		{
 			al.moveRight(false);
 		}
-		if (evt.getKeyCode() == KeyEvent.VK_UP)
+		if (evt.getKeyCode() == KeyEvent.VK_UP ||  evt.getKeyCode() == KeyEvent.VK_W) 
 		{
 			al.moveUp(false);
 		}
-		if (evt.getKeyCode() == KeyEvent.VK_DOWN)
+		if (evt.getKeyCode() == KeyEvent.VK_DOWN || evt.getKeyCode() == KeyEvent.VK_S)
 		{
 			al.moveDown(false);
 		}
+		/*
+		if (evt.getKeyCode() == 'a')
+		{
+			al.moveLeft(false);
+		}
+		if (evt.getKeyCode() == 'd')
+		{
+			al.moveRight(false);
+		}
+		if (evt.getKeyCode() == 'w') 
+		{
+			al.moveUp(false);
+		}
+		if (evt.getKeyCode() == 's')
+		{
+			al.moveDown(false);
+		}
+		*/
 	}
 	
 	public void keyPressed(KeyEvent evt) {
+		/*
 		if (evt.getKeyCode() == KeyEvent.VK_LEFT)
 		{
 			al.moveLeft(true);
@@ -641,6 +661,25 @@ class KeyBoardListener implements KeyListener
 		{
 			al.moveDown(true);
 		}
+		*/
+
+		if (evt.getKeyCode() == KeyEvent.VK_LEFT || evt.getKeyCode() == KeyEvent.VK_A)
+		{
+			al.moveLeft(true);
+		}
+		if (evt.getKeyCode() == KeyEvent.VK_RIGHT || evt.getKeyCode() == KeyEvent.VK_D)
+		{
+			al.moveRight(true);
+		}
+		if (evt.getKeyCode() == KeyEvent.VK_UP ||  evt.getKeyCode() == KeyEvent.VK_W) 
+		{
+			al.moveUp(true);
+		}
+		if (evt.getKeyCode() == KeyEvent.VK_DOWN || evt.getKeyCode() == KeyEvent.VK_S)
+		{
+			al.moveDown(true);
+		}
+
 	}
 
 	public void keyTyped(KeyEvent evt) {}

@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.CardLayout;
 import javax.swing.JButton;
+import java.awt.Graphics;
 
 //Hall of fame!
 public class FamePanel extends JPanel
@@ -21,6 +22,7 @@ public class FamePanel extends JPanel
 	private JLabel titleLabel;
 	private GameHolder holder;
 	private CardLayout cards;
+	private int newEntryIndex;
 
 	public static final String SCORE_FILENAME = "hallOfFame.txt";
 
@@ -54,9 +56,24 @@ public class FamePanel extends JPanel
 			entries[i].setFont(new Font("Times new roman", Font.PLAIN, 20));
 		}
 		
+		//There is no new entry
+		newEntryIndex = -1;
+
 		loadScores();
 
 		addEverything(); //Add EVERYTHING
+	}
+
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		g.setColor(new Color(0, 255, 0));
+		//Paint the green background thing around the new score
+		if (newEntryIndex >= 1)
+		{
+			//The shift: amount of height per score
+			g.fillRect(0, entries[newEntryIndex].getY(), 1000, 67);
+		}
 	}
 
 	public void addEverything()
@@ -162,6 +179,7 @@ public class FamePanel extends JPanel
 				{
 					entries[i + 1] = new JLabel(String.format("%d. %s: %d", i + 2, name, score), JLabel.CENTER);//i + 1 actually represents a worse score in the hall of fame
 					entries[i + 1].setFont(new Font("Times new roman", Font.PLAIN, 20));
+					newEntryIndex = i + 1;
 					scores[i + 1] = score;
 					names[i + 1] = name;
 				}
@@ -193,6 +211,7 @@ public class FamePanel extends JPanel
 	{
 		public void actionPerformed(ActionEvent evt)
 		{
+			newEntryIndex = -1;
 			cards.show(holder, "Home");
 		}
 	}

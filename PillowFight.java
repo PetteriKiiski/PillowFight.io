@@ -39,19 +39,19 @@ class GameHolder extends JPanel
 	private final boolean PRINT_POSITION = false; //Unless I work on this later, this will now be turned off
 
 	//These panels are for updating background color
-	LearnPanel learnPanel;
-	HallEntryPanel hep;
-	GamePanel gp;
-	HomePanel hp;
-	InstructionsPanel ip;
-	LosePanel lp;
-	FamePanel fp;
+	private LearnPanel learnPanel;
+	private HallEntryPanel hep;
+	private GamePanel gp;
+	private HomePanel hp;
+	private InstructionsPanel ip;
+	private LosePanel lp;
+	private FamePanel fp;
 
 	//Cards are placed on this.
 	private JPanel cardPanel;
 	
 	//For the game reset
-	CardLayout cards;
+	private CardLayout cards;
 
 	public GameHolder()
 	{
