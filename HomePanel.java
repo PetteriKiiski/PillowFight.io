@@ -16,6 +16,7 @@ import javax.swing.JSlider;
 import java.awt.Graphics;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.JTextField;
 
 public class HomePanel extends JPanel
 {
@@ -36,6 +37,11 @@ public class HomePanel extends JPanel
 	private JCheckBox heavyBox;
 	private JCheckBox healBox;
 	private JSlider accuracySlider;
+	private JTextField nameField;
+
+	//Have you entered your name?
+	private boolean showNameMsg;
+	private boolean nameSelected;
 
 	//Elligibility: are you aloud to run for hall of fame?
 	private boolean eligibility;
@@ -150,9 +156,21 @@ public class HomePanel extends JPanel
 		screenBar.add(screenMenu);
 
 		//Then, finally set the boundaries of our JMenu
-		screenBar.setBounds(200, 150, 100, 20);
+		screenBar.setBounds(200, 180, 100, 20);
 
-		//Add all the components
+		//The name field: no reset as it's assumed to be the same person
+		nameField = new JTextField("Nickname");
+		nameField.setBounds(200, 150, 100, 20);
+		nameField.addActionListener(new NameListener());
+	
+		//Don't show the name message by default
+		showNameMsg = false;
+		nameSelected = false;
+
+		//Add the name field
+		add(nameField);
+
+		//Add components
 		add(titleLabel);
 		add(screenBar);
 
@@ -181,6 +199,20 @@ public class HomePanel extends JPanel
 			g.drawRect(540, 240, 100, 50);
 			g.setFont(new Font("Times new roman", Font.PLAIN, 20));
 			g.drawString("Ineligible", 550, 280);
+		}
+		//If you tried to play without a name change
+		if (showNameMsg)
+		{
+			g.setFont(new Font("Arial", Font.PLAIN, 15));
+			if (backgroundColor.getRed() == 255 && backgroundColor.getBlue() == 0) //There is only only one color like this
+			{
+				g.setColor(new Color(0, 0, 0));
+			}
+			else
+			{
+				g.setColor(new Color(255, 0, 0));
+			}
+			g.drawString("Please enter your name", 200, 130);
 		}
 	}
 
@@ -212,22 +244,31 @@ public class HomePanel extends JPanel
 			switch (cmd)
 			{
 				case "START GAME":
-					gamePanel.regenPillows(); //Re-generate the world every time
-					gamePanel.regenBots((Math.PI / 2) * ((100 - accuracySlider.getValue()) / 100)); //0% accuracy represents Math.PI / 2.
+					if (nameSelected)
+					{
+						gamePanel.regenPillows(); //Re-generate the world every time
+						gamePanel.regenBots((Math.PI / 2) * ((100 - accuracySlider.getValue()) / 100)); //0% accuracy represents Math.PI / 2.
 									  //100% accuracy represents 0.
 									  //So, I just use (Math.PI / 2) * ((100 - accuracy) / 100)
 
-					//Start immune
-					gamePanel.setEligibility((eligibility));
-					gamePanel.setImmune(true);
-					gamePanel.start(); //Start the game on the first time playing
-					cards.show(mainCanvas, "Game");
+						//Start immune
+						gamePanel.setEligibility((eligibility));
+						gamePanel.setImmune(true);
+						gamePanel.start(); //Start the game on the first time playing
+						cards.show(mainCanvas, "Game");
+					}
+					else
+					{
+						showNameMsg = true;
+					}
 					break;
 				case "Instructions":
 					cards.show(mainCanvas, "Instructions");
+					showNameMsg = false; //The user switched panels, now we don't show the message
 					break;
 				case "Hall of Fame":
 					cards.show(mainCanvas, "Fame");
+					showNameMsg = false;
 					break;
 				case "RED": //Set the color of the background
 					backgroundColor = new Color(255, 0, 0);
@@ -266,12 +307,24 @@ public class HomePanel extends JPanel
 		}
 	}
 
+	//Completely separate listener for the namefield
+	class NameListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent evt)
+		{
+			gamePanel.setName(evt.getActionCommand());
+			showNameMsg = false;
+			nameSelected = true;
+			repaint();
+		}
+	}
+
 	//This is kind of stupid: it's JUST to check if we're still eligible
 	class SliderChanged implements ChangeListener
 	{
 		public void stateChanged(ChangeEvent evt)
 		{
-			eligibility = (accuracySlider.getValue() == 50 && Pillow.pillowGen[0] && Pillow.pillowGen[1] && Pillow.pillowGen[2] && Pillow.pillowGen[3]);
+			eligibility = (accuracySlider.getValue() >= 50 && Pillow.pillowGen[0] && Pillow.pillowGen[1] && Pillow.pillowGen[2] && Pillow.pillowGen[3]);
 			repaint(); //Repaint for elligibility
 		}
 	}

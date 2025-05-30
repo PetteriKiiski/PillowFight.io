@@ -1,0 +1,9 @@
+ - Add Requests into the game :P
+ - Fix the pillow hit self bug
+ - Make Instructions better
+ - Make more constants
+ - Make screen bigger
+ - Add names (2025-06-15 at 11:59i)
+ - Make names go onto hall of fame (essentially remove HallEntryPanel.java)
+ - Improve the graphics(maybe have lilja do them?)
+ - Make it networked (this will be quite a big thing, and probably won't happen soon)

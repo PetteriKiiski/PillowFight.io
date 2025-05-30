@@ -66,6 +66,9 @@ public class GamePanel extends JPanel
 	//Eligible or not?
 	private boolean eligible;
 
+	//¿Cómo te llamas?
+	private String name;
+
 	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel, LearnPanel learnPanel, FamePanel hallPanelIn, HallEntryPanel entryPanelIn)
 	{
 		//Default background
@@ -121,6 +124,15 @@ public class GamePanel extends JPanel
 
 		//And, finally the mouseListener
 		addMouseListener(new ThrowListener());
+		
+		//Default name
+		name = "Player";
+	}
+
+	//Sets the name
+	public void setName(String nameIn)
+	{
+		name = nameIn;
 	}
 
 	//Sets the eligibility
@@ -300,6 +312,11 @@ public class GamePanel extends JPanel
 		g.fillOval(450, 350, 100, 100);
 		g.setColor(new Color(0, 0, 0));
 		g.drawOval(450, 350, 100, 100);
+
+		//And the player's name
+		g.setFont(new Font("Arial", Font.PLAIN, 28));
+		g.drawString(name, (int)(500 - (7 * name.length())), 340); //The 7 is just by trial and error: it doesn't work efficiently always
+
 
 		//Draw the hearts
 		//First heart

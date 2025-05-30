@@ -26,7 +26,7 @@ public class PillowFight
 		frame.setSize(1000, 800);
 		frame.setLocation(200, 0);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(true);
+		frame.setResizable(false);
 		GameHolder holder = new GameHolder();
 		frame.getContentPane().add(holder);
 		frame.setVisible(true);
