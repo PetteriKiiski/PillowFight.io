@@ -133,7 +133,7 @@ public class LearnPanel extends JPanel
 			else
 			{
 				toHighScore = false; //Reset the state
-				cards.show(panel, "Hall Entry");
+				cards.show(panel, "Fame");
 			}
 		}
 	}

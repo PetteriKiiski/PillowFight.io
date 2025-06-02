@@ -40,7 +40,6 @@ class GameHolder extends JPanel
 
 	//These panels are for updating background color
 	private LearnPanel learnPanel;
-	private HallEntryPanel hep;
 	private GamePanel gp;
 	private HomePanel hp;
 	private InstructionsPanel ip;
@@ -64,8 +63,7 @@ class GameHolder extends JPanel
 		learnPanel = new LearnPanel(cards, this);
 		lp = new LosePanel(this, cards);
 		fp = new FamePanel(this, cards);
-		hep = new HallEntryPanel(fp, this, cards);
-		gp = new GamePanel(cards, this, lp, learnPanel, fp, hep);
+		gp = new GamePanel(cards, this, lp, learnPanel, fp);
 		hp = new HomePanel(cards, this, gp);
 		ip = new InstructionsPanel(cards, this);		
 
@@ -76,7 +74,6 @@ class GameHolder extends JPanel
 		add("Fame", fp);
 		add("Loss", lp);
 		add("Learn", learnPanel); //Aww man, repeating lp is not aloud
-		add("Hall Entry", hep);
 
 		//For ease of null layout component placement
 		if (PRINT_POSITION)
@@ -89,7 +86,6 @@ class GameHolder extends JPanel
 	{
 		Color updatedColor = hp.getBackColor();
 		learnPanel.changeBackground(updatedColor);
-		hep.changeBackground(updatedColor);
 		gp.changeBackground(updatedColor);
 		hp.changeBackground(updatedColor);
 		ip.changeBackground(updatedColor);

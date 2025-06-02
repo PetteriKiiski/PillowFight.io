@@ -69,7 +69,7 @@ public class GamePanel extends JPanel
 	//¿Cómo te llamas?
 	private String name;
 
-	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel, LearnPanel learnPanel, FamePanel hallPanelIn, HallEntryPanel entryPanelIn)
+	public GamePanel(CardLayout cardsIn, JPanel mainPanelIn, LosePanel lossPanel, LearnPanel learnPanel, FamePanel hallPanelIn)
 	{
 		//Default background
 		setBackground(new Color(255, 255, 255));
@@ -101,7 +101,7 @@ public class GamePanel extends JPanel
 		player = new PlayerBot();
 		pillows = new PillowArray(player, this);
 		bots = new BotArray(pillows, Math.PI / 4, player, this); //miss represents the difficulty. In radians. Player represents the player
-		aL = new AnimateListener(this, pillows, bots, cards, mainPanel, losePanel, learnPanel, hallPanelIn, entryPanelIn);
+		aL = new AnimateListener(this, pillows, bots, cards, mainPanel, losePanel, learnPanel, hallPanelIn);
 		timer = new Timer(AnimateListener.DELAY, aL);
 		addKeyListener(new KeyBoardListener(aL)); //Our KeyListener
 		
@@ -133,6 +133,7 @@ public class GamePanel extends JPanel
 	public void setName(String nameIn)
 	{
 		name = nameIn;
+		aL.setName(name);
 	}
 
 	//Sets the eligibility
@@ -455,32 +456,32 @@ class ButtonListener implements ActionListener
 class AnimateListener implements ActionListener
 {
 	//Array of pillows
-	PillowArray pillows;
+	private PillowArray pillows;
 	
 	//Array of Bots
-	BotArray bots;
+	private BotArray bots;
 
 	//The Drawing panel
-	GamePanel panel;
+	private GamePanel panel;
 	
 	//The cards
-	CardLayout cards;
+	private CardLayout cards;
 	
 	//The card panel
-	JPanel mainPanel;
+	private JPanel mainPanel;
 
 	//The lose panel
-	LosePanel losePanel;
+	private LosePanel losePanel;
 	
-	//The hall of fame: not ever switched to from this panel, but we do use it's functions
-	FamePanel hallPanel;
-
-	//HallEntryPanel: we do switch to this one however
-	HallEntryPanel entryPanel;
+	//The hall of fame: switched to since we know the name
+	private FamePanel hallPanel;
 
 	//The learning panel
-	LearnPanel learnPanel;
+	private LearnPanel learnPanel;
 	
+	//The name
+	private String name;
+
 	//Move values: will be changed by the KeyListener(KeyBoardListener)
 	private boolean left;
 	private boolean right;
@@ -497,7 +498,7 @@ class AnimateListener implements ActionListener
 
 	//Take in all the info we need. Which is a lot.
 	public AnimateListener(GamePanel panelIn, PillowArray pillowsIn, BotArray botsIn, CardLayout cardsIn, JPanel mainPanelIn, 
-			LosePanel lossPanel, LearnPanel learnPanelIn, FamePanel hallPanelIn, HallEntryPanel entryPanelIn)
+			LosePanel lossPanel, LearnPanel learnPanelIn, FamePanel hallPanelIn)
 	{
 		pillows = pillowsIn;
 		bots = botsIn;
@@ -511,9 +512,15 @@ class AnimateListener implements ActionListener
 		losePanel = lossPanel;
 		learnPanel = learnPanelIn;
 		hallPanel = hallPanelIn;
-		entryPanel = entryPanelIn;
+		name = "Player";
 	}
-	
+
+	//Name is not determined upon instantiation, determined here
+	public void setName(String nameIn)
+	{
+		name = nameIn;
+	}
+
 	//"while (true) {" loop
 	public void actionPerformed(ActionEvent evt)
 	{
@@ -553,24 +560,27 @@ class AnimateListener implements ActionListener
 		if (panel.getPlayer().health <= 0)
 		{
 			losePanel.setScore(panel.getScore());
-			if (panel.getLearn() && !panel.immune) //Don't show this panel over and over again, but keep the timer running
+			if (!panel.immune)
 			{
-				learnPanel.setProblem(panel.getSolution(), panel.getType(), panel.getOperation()); //Inform which problem to teach
-				if (panel.isEligible() && hallPanel.isHighScore(panel.getScore()))
+				if (panel.getLearn()) //Don't show this panel over and over again, but keep the timer running
 				{
-					entryPanel.setScore(panel.getScore());
-					learnPanel.hasHighScore();
+					learnPanel.setProblem(panel.getSolution(), panel.getType(), panel.getOperation()); //Inform which problem to teach
+					if (panel.isEligible() && hallPanel.isHighScore(panel.getScore()))
+					{
+						hallPanel.addEntry(name, panel.getScore());
+						learnPanel.hasHighScore();
+					}
+					cards.show(mainPanel, "Learn"); //YOU WILL LEARN
 				}
-				cards.show(mainPanel, "Learn"); //YOU WILL LEARN
-			}
-			else if (panel.isEligible() && hallPanel.isHighScore(panel.getScore()) && !panel.immune) //This is the order of precedence: there is no need to see the lose panel in this case
-			{
-				entryPanel.setScore(panel.getScore());
-				cards.show(mainPanel, "Hall Entry");
-			}
-			else if (!panel.immune)
-			{
-				cards.show(mainPanel, "Loss");
+				else if (panel.isEligible() && hallPanel.isHighScore(panel.getScore())) //This is the order of precedence: there is no need to see the lose panel in this case
+				{
+					hallPanel.addEntry(name, panel.getScore());
+					cards.show(mainPanel, "Fame");
+				}
+				else
+				{
+					cards.show(mainPanel, "Loss");
+				}
 			}
 			panel.setImmune(true);
 
@@ -622,8 +632,8 @@ class KeyBoardListener implements KeyListener
 		al = alIn; //Used to update the movement
 	}
 	
-	public void keyReleased(KeyEvent evt) {
-		
+	public void keyReleased(KeyEvent evt)
+	{	
 		if (evt.getKeyCode() == KeyEvent.VK_LEFT || evt.getKeyCode() == KeyEvent.VK_A)
 		{
 			al.moveLeft(false);
@@ -640,46 +650,10 @@ class KeyBoardListener implements KeyListener
 		{
 			al.moveDown(false);
 		}
-		/*
-		if (evt.getKeyCode() == 'a')
-		{
-			al.moveLeft(false);
-		}
-		if (evt.getKeyCode() == 'd')
-		{
-			al.moveRight(false);
-		}
-		if (evt.getKeyCode() == 'w') 
-		{
-			al.moveUp(false);
-		}
-		if (evt.getKeyCode() == 's')
-		{
-			al.moveDown(false);
-		}
-		*/
 	}
 	
-	public void keyPressed(KeyEvent evt) {
-		/*
-		if (evt.getKeyCode() == KeyEvent.VK_LEFT)
-		{
-			al.moveLeft(true);
-		}
-		if (evt.getKeyCode() == KeyEvent.VK_RIGHT)
-		{
-			al.moveRight(true);
-		}
-		if (evt.getKeyCode() == KeyEvent.VK_UP)
-		{
-			al.moveUp(true);
-		}
-		if (evt.getKeyCode() == KeyEvent.VK_DOWN)
-		{
-			al.moveDown(true);
-		}
-		*/
-
+	public void keyPressed(KeyEvent evt) 
+	{
 		if (evt.getKeyCode() == KeyEvent.VK_LEFT || evt.getKeyCode() == KeyEvent.VK_A)
 		{
 			al.moveLeft(true);
